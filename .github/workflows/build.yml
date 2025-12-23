@@ -3,13 +3,15 @@ name: Build Favo App
 on:
   push:
     tags:
-      - 'v*' # Chỉ chạy khi có tag v1.0.0, v1.0.1...
+      - 'v*' # Quy trình chỉ chạy khi có tag bắt đầu bằng chữ v (vd: v1.0.0, v1.0.1)
 
 jobs:
   release:
     runs-on: windows-latest
+    
     permissions:
-      contents: write
+      contents: write # Cấp quyền ghi để GitHub có thể tạo bản Release mới
+
     steps:
       - name: Check out Git repository
         uses: actions/checkout@v4
@@ -22,11 +24,14 @@ jobs:
       - name: Install Dependencies
         run: npm install
 
+      # Bước 1: Build mã nguồn React (Vite) ra thư mục dist
       - name: Build React
         run: npm run build
 
+      # Bước 2: Đóng gói thành file .exe và đẩy lên GitHub Releases
       - name: Build & Release Electron
         env:
-          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+          # Dùng token tự động của GitHub (Không cần tạo thủ công)
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           npx electron-builder --win --publish always
