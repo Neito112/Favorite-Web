@@ -5,19 +5,18 @@ const https = require('https');
 const { autoUpdater } = require('electron-updater');
 
 // --- CẤU HÌNH LOG UPDATE ---
-autoUpdater.logger = require("electron-log");
-autoUpdater.logger.transports.file.level = "info";
+try {
+    autoUpdater.logger = require("electron-log");
+    autoUpdater.logger.transports.file.level = "info";
+} catch (e) { console.log('Log module not found'); }
 autoUpdater.autoDownload = false;
 
 // --- [QUAN TRỌNG] CẤU HÌNH ĐƯỜNG DẪN AN TOÀN ---
-
-// 1. Đường dẫn thư mục cài đặt (Chỉ để lấy dữ liệu mẫu - READ ONLY)
 const APP_INSTALL_DIR = app.isPackaged 
     ? path.join(process.resourcesPath, 'data') 
     : path.join(__dirname, '../data');
 
-// 2. Đường dẫn dữ liệu người dùng (Nơi lưu trữ thật sự - READ/WRITE)
-// Đây là đường dẫn %APPDATA%/Favo (Không bị mất khi update)
+// Lưu vào AppData để không mất khi update
 const USER_DATA_DIR = path.join(app.getPath('userData'), 'UserData');
 
 const BOOKMARKS_DIR = path.join(USER_DATA_DIR, 'bookmarks');
@@ -28,30 +27,25 @@ const BG_FILE = path.join(USER_DATA_DIR, 'background.png');
 
 const APP_ICON_PATH = path.join(__dirname, '../icon.ico');
 
-// --- HÀM KHỞI TẠO DỮ LIỆU (MIGRATION) ---
+// --- HÀM KHỞI TẠO DỮ LIỆU ---
 function initializeUserData() {
-    // Tạo thư mục gốc trong AppData nếu chưa có
     if (!fs.existsSync(USER_DATA_DIR)) fs.mkdirSync(USER_DATA_DIR, { recursive: true });
     if (!fs.existsSync(BOOKMARKS_DIR)) fs.mkdirSync(BOOKMARKS_DIR, { recursive: true });
     if (!fs.existsSync(ICONS_DIR)) fs.mkdirSync(ICONS_DIR, { recursive: true });
     if (!fs.existsSync(FONTS_DIR)) fs.mkdirSync(FONTS_DIR, { recursive: true });
 
-    // [AUTO-HEALING] Copy dữ liệu mẫu từ thư mục cài đặt sang AppData (chỉ chạy lần đầu hoặc khi thiếu file)
-    // Ví dụ: Copy font mặc định, settings mặc định
+    // Copy dữ liệu mẫu nếu chưa có
     copyFolderRecursiveSync(path.join(APP_INSTALL_DIR, 'fonts'), FONTS_DIR);
     
-    // Copy background mặc định nếu chưa có
     const defaultBg = path.join(APP_INSTALL_DIR, 'background.png');
     if (fs.existsSync(defaultBg) && !fs.existsSync(BG_FILE)) {
         fs.copyFileSync(defaultBg, BG_FILE);
     }
 }
 
-// Hàm copy thư mục đệ quy (Dùng để chép dữ liệu mẫu)
 function copyFolderRecursiveSync(source, target) {
     if (!fs.existsSync(source)) return;
     if (!fs.existsSync(target)) fs.mkdirSync(target, { recursive: true });
-
     const files = fs.readdirSync(source);
     files.forEach((file) => {
         const curSource = path.join(source, file);
@@ -59,10 +53,7 @@ function copyFolderRecursiveSync(source, target) {
         if (fs.lstatSync(curSource).isDirectory()) {
             copyFolderRecursiveSync(curSource, curTarget);
         } else {
-            // Chỉ copy nếu file đích chưa tồn tại (để không đè bookmark cũ của user)
-            if (!fs.existsSync(curTarget)) {
-                fs.copyFileSync(curSource, curTarget);
-            }
+            if (!fs.existsSync(curTarget)) fs.copyFileSync(curSource, curTarget);
         }
     });
 }
@@ -90,8 +81,7 @@ app.commandLine.appendSwitch('lang', 'vi');
 let mainWindow;
 
 function createWindow() {
-  // 1. Khởi tạo dữ liệu người dùng trước khi vẽ giao diện
-  initializeUserData();
+  initializeUserData(); // [QUAN TRỌNG] Tạo folder AppData trước khi vẽ UI
 
   mainWindow = new BrowserWindow({
     width: 1280, height: 800, 
@@ -131,7 +121,7 @@ app.whenReady().then(() => {
   }
 });
 
-// AUTO UPDATE EVENTS
+// --- AUTO UPDATE EVENTS ---
 autoUpdater.on('update-available', () => {
     dialog.showMessageBox(mainWindow, {
         type: 'info', title: 'Cập nhật Favo', message: 'Đã tìm thấy phiên bản mới. Bạn có muốn tải về ngay không?', buttons: ['Cập nhật', 'Để sau']
@@ -147,8 +137,7 @@ autoUpdater.on('update-downloaded', () => {
     });
 });
 
-// --- IPC HANDLERS (Đã trỏ vào USER_DATA_DIR) ---
-
+// --- IPC HANDLERS (Dùng đường dẫn USER_DATA_DIR) ---
 ipcMain.handle('load-bookmarks', async () => {
   try {
     if (!fs.existsSync(BOOKMARKS_DIR)) return [];
@@ -161,11 +150,9 @@ ipcMain.handle('load-bookmarks', async () => {
           const content = fs.readFileSync(filePath, 'utf-8');
           const data = JSON.parse(content);
           if (data && typeof data === 'object') {
-              // Auto-healing icon path
               if (typeof data.localIconPath === 'string' && data.localIconPath.trim() !== '') {
                  try {
                      const fileName = path.basename(data.localIconPath);
-                     // Trỏ icon về thư mục ICONS_DIR mới trong AppData
                      data.localIconPath = path.join(ICONS_DIR, fileName).replace(/\\/g, '/');
                  } catch (pathErr) { data.localIconPath = null; }
               } else { data.localIconPath = null; }
@@ -185,11 +172,9 @@ ipcMain.handle('add-bookmark', async (event, bookmarkData) => {
     const jsonFilename = `${id}.json`;
     const iconSavePath = path.join(ICONS_DIR, iconFilename);
     const jsonSavePath = path.join(BOOKMARKS_DIR, jsonFilename);
-
     let localIconPath = null;
     let savedIconFilename = null; 
     const iconUrl = bookmarkData.iconUrl;
-
     if (iconUrl) {
       try {
         if (iconUrl.startsWith('data:image')) {
@@ -204,7 +189,6 @@ ipcMain.handle('add-bookmark', async (event, bookmarkData) => {
         }
       } catch (err) { console.error("Lỗi xử lý icon:", err); }
     }
-
     const dataToDisk = { ...bookmarkData, id, localIconPath: savedIconFilename || null, createdAt: new Date().toISOString() };
     fs.writeFileSync(jsonSavePath, JSON.stringify(dataToDisk, null, 2));
     return { success: true, data: { ...dataToDisk, localIconPath: localIconPath } };
@@ -275,7 +259,6 @@ ipcMain.handle('get-local-fonts', async () => {
 });
 
 ipcMain.on('open-fonts-folder', () => {
-    // Tự động tạo nếu chưa có
     if (!fs.existsSync(FONTS_DIR)) fs.mkdirSync(FONTS_DIR, { recursive: true });
     shell.openPath(FONTS_DIR);
 });

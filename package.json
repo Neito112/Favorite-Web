@@ -1,9 +1,13 @@
 {
   "name": "favo-app",
-  "version": "1.0.0",
+  "version": "0.9.9",
   "description": "Bookmark Manager Favo",
   "main": "src/main.cjs",
-  "author": "Your Name",
+  "author": "Neito",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Neito112/Favorite-Web.git"
+  },
   "scripts": {
     "dev": "vite",
     "start": "electron .",
@@ -11,11 +15,18 @@
     "preview": "vite preview",
     "electron": "wait-on tcp:5173 && electron .",
     "start:desktop": "concurrently -k \"npm run dev\" \"npm run electron\"",
-    "build": "vite build && electron-builder --win"
+    "build": "vite build"
   },
   "build": {
     "appId": "com.favo.manager",
     "productName": "Favo",
+    "publish": [
+      {
+        "provider": "github",
+        "owner": "Neito112",
+        "repo": "Favorite-Web"
+      }
+    ],
     "directories": {
       "output": "release"
     },
@@ -55,6 +66,7 @@
     }
   },
   "dependencies": {
+    "electron-log": "^5.1.2",
     "electron-updater": "^6.6.2",
     "lucide-react": "^0.292.0",
     "react": "^18.2.0",
