@@ -1,0 +1,1327 @@
+Need to install the following packages:
+tree-node-cli@1.6.0
+Ok to proceed? (y) 
+Favorite-Web
+├── data
+│   ├── bookmarks
+│   │   ├── 1766502511645.json
+│   │   ├── 1766502865262.json
+│   │   ├── 1766503820775.json
+│   │   └── 1766505207870.json
+│   ├── fonts
+│   │   ├── BVMyriB.ttf
+│   │   ├── BVfuji.ttf
+│   │   ├── Candara-Viet.ttf
+│   │   ├── GRGAREF.TTF
+│   │   ├── GeosansLight.ttf
+│   │   ├── OPTIVBI_.TTF
+│   │   ├── OPTIVB__.TTF
+│   │   ├── OPTIVI__.TTF
+│   │   ├── OPTIVRG_.TTF
+│   │   ├── TMC-Pepsi Tu Linh.ttf
+│   │   ├── TMC-Thaleia.ttf
+│   │   ├── TMC-TrajanPro-Bold.ttf
+│   │   ├── Thuphap.ttf
+│   │   ├── Tmcdavidab.ttf
+│   │   ├── Tmchazelnlet.ttf
+│   │   ├── Tmcholtzschue.ttf
+│   │   ├── UTM A&S Graceland.ttf
+│   │   ├── UTM A&S Heartbeat.ttf
+│   │   ├── UTM A&S Signwriter.ttf
+│   │   ├── UTM Agin.ttf
+│   │   ├── UTM Aircona.ttf
+│   │   ├── UTM Akashi.ttf
+│   │   ├── UTM Alba Matter.ttf
+│   │   ├── UTM Alberta Heavy.ttf
+│   │   ├── UTM Alexander.ttf
+│   │   ├── UTM Alpine KT.ttf
+│   │   ├── UTM Alter Gothic.ttf
+│   │   ├── UTM Ambrose.ttf
+│   │   ├── UTM Ambrosia.ttf
+│   │   ├── UTM American Sans.ttf
+│   │   ├── UTM Americana.ttf
+│   │   ├── UTM AmericanaB.ttf
+│   │   ├── UTM AmericanaBEx.ttf
+│   │   ├── UTM AmericanaItalic.ttf
+│   │   ├── UTM Amerika Sans.ttf
+│   │   ├── UTM Amherst.ttf
+│   │   ├── UTM Androgyne.ttf
+│   │   ├── UTM Aptima.ttf
+│   │   ├── UTM AptimaBold.ttf
+│   │   ├── UTM AptimaBoldItalic.ttf
+│   │   ├── UTM AptimaItalic.ttf
+│   │   ├── UTM Aristote.ttf
+│   │   ├── UTM Arruba.ttf
+│   │   ├── UTM Atlas.ttf
+│   │   ├── UTM Atlas_Solid.ttf
+│   │   ├── UTM Aurora.ttf
+│   │   ├── UTM Avenida.ttf
+│   │   ├── UTM Avo.ttf
+│   │   ├── UTM AvoBold.ttf
+│   │   ├── UTM AvoBold_Italic.ttf
+│   │   ├── UTM AvoItalic.ttf
+│   │   ├── UTM Azuki.ttf
+│   │   ├── UTM BanqueB.ttf
+│   │   ├── UTM BanqueR.ttf
+│   │   ├── UTM Beautiful Caps.ttf
+│   │   ├── UTM Bell.ttf
+│   │   ├── UTM Bienvenue.ttf
+│   │   ├── UTM Billhead 1910.ttf
+│   │   ├── UTM Bitsumishi Pro.ttf
+│   │   ├── UTM Brewers KT.ttf
+│   │   ├── UTM BryantLG.ttf
+│   │   ├── UTM BryantLG_B.ttf
+│   │   ├── UTM Bustamalaka.ttf
+│   │   ├── UTM Cabaret.ttf
+│   │   ├── UTM Cafeta.ttf
+│   │   ├── UTM Camellia.ttf
+│   │   ├── UTM Candombe.ttf
+│   │   ├── UTM Caviar.ttf
+│   │   ├── UTM Centur.ttf
+│   │   ├── UTM CenturBold.ttf
+│   │   ├── UTM CenturBoldItalic.ttf
+│   │   ├── UTM CenturItalic.ttf
+│   │   ├── UTM Charlemagne.ttf
+│   │   ├── UTM Charlotte.ttf
+│   │   ├── UTM Chickenhawk.ttf
+│   │   ├── UTM ClassizismAntiqua.ttf
+│   │   ├── UTM Colossalis.ttf
+│   │   ├── UTM Conestoga.ttf
+│   │   ├── UTM Cookies.ttf
+│   │   ├── UTM Cool Blue.ttf
+│   │   ├── UTM Cooper Black.ttf
+│   │   ├── UTM Cooper BlackItalic.ttf
+│   │   ├── UTM Copperplate.ttf
+│   │   ├── UTM CopperplateB.ttf
+│   │   ├── UTM Dai Co Viet.ttf
+│   │   ├── UTM Davida.ttf
+│   │   ├── UTM Demian KT.ttf
+│   │   ├── UTM Deutsch Gothic.ttf
+│   │   ├── UTM Diana.ttf
+│   │   ├── UTM Dinh Tran.ttf
+│   │   ├── UTM Duepuntozero.ttf
+│   │   ├── UTM DuepuntozeroBold.ttf
+│   │   ├── UTM EdwardianB.ttf
+│   │   ├── UTM EdwardianKT.ttf
+│   │   ├── UTM Eremitage.ttf
+│   │   ├── UTM Ericsson Capital.ttf
+│   │   ├── UTM Erie Black.ttf
+│   │   ├── UTM Essendine Caps.ttf
+│   │   ├── UTM Essendine CapsBold.ttf
+│   │   ├── UTM FacebookB K&T.ttf
+│   │   ├── UTM FacebookK&TBoldItalic.ttf
+│   │   ├── UTM FacebookR K&T.ttf
+│   │   ├── UTM Fancy Full.ttf
+│   │   ├── UTM Fire House.ttf
+│   │   ├── UTM Flamenco.ttf
+│   │   ├── UTM Flavour.ttf
+│   │   ├── UTM French Vanilla.ttf
+│   │   ├── UTM Futura Extra.ttf
+│   │   ├── UTM Gille Classic.ttf
+│   │   ├── UTM Gloria.ttf
+│   │   ├── UTM God's WordBold.ttf
+│   │   ├── UTM God's WordBoldItalic.ttf
+│   │   ├── UTM God's WordR.ttf
+│   │   ├── UTM God's WordRItalic.ttf
+│   │   ├── UTM Gradoo.ttf
+│   │   ├── UTM Guanine.ttf
+│   │   ├── UTM Habano.ttf
+│   │   ├── UTM Hanzel.ttf
+│   │   ├── UTM Helve.ttf
+│   │   ├── UTM HelveBold.ttf
+│   │   ├── UTM HelveBold_Italic.ttf
+│   │   ├── UTM Helve_Italic.ttf
+│   │   ├── UTM HelvetIns.ttf
+│   │   ├── UTM Impact.ttf
+│   │   ├── UTM Iron Gothic.ttf
+│   │   ├── UTM IsadoraBold.ttf
+│   │   ├── UTM IsadoraR.ttf
+│   │   ├── UTM Kabel KT.ttf
+│   │   ├── UTM Karate.ttf
+│   │   ├── UTM Kona KT.ttf
+│   │   ├── UTM Korataki.ttf
+│   │   ├── UTM Korataki_Bold.ttf
+│   │   ├── UTM LinotypeZapfino KT.ttf
+│   │   ├── UTM Loko.ttf
+│   │   ├── UTM Mabella.ttf
+│   │   ├── UTM Marlboro.ttf
+│   │   ├── UTM Micra.ttf
+│   │   ├── UTM Mobifone KT.ttf
+│   │   ├── UTM Mother.ttf
+│   │   ├── UTM NGHA 01.ttf
+│   │   ├── UTM Neo Sans Intel.ttf
+│   │   ├── UTM Neo Sans IntelBold.ttf
+│   │   ├── UTM Neo Sans IntelBold_Italic.ttf
+│   │   ├── UTM Neo Sans Intel_Italic.ttf
+│   │   ├── UTM Netmuc KT.ttf
+│   │   ├── UTM Neutra.ttf
+│   │   ├── UTM NguyenHa 02.ttf
+│   │   ├── UTM Niagara.ttf
+│   │   ├── UTM Nokia Standard.ttf
+│   │   ├── UTM Nokia StandardB.ttf
+│   │   ├── UTM Nokia.ttf
+│   │   ├── UTM Novido.ttf
+│   │   ├── UTM Nyala.ttf
+│   │   ├── UTM Omni.ttf
+│   │   ├── UTM Ong Do Gia.ttf
+│   │   ├── UTM Ong Do Tre.ttf
+│   │   ├── UTM Oregon.ttf
+│   │   ├── UTM Pacific Standard.ttf
+│   │   ├── UTM Penumbra.ttf
+│   │   ├── UTM PenumbraBold.ttf
+│   │   ├── UTM Pierre.ttf
+│   │   ├── UTM Raven.ttf
+│   │   ├── UTM Rockwell.ttf
+│   │   ├── UTM Roman Classic.ttf
+│   │   ├── UTM Sarah.ttf
+│   │   ├── UTM Scriptina KT.ttf
+│   │   ├── UTM SeagullBold.ttf
+│   │   ├── UTM SeagullBoldItalic.ttf
+│   │   ├── UTM Sharnay.ttf
+│   │   ├── UTM Showcard.ttf
+│   │   ├── UTM Silk Script.ttf
+│   │   ├── UTM Sloop 1.ttf
+│   │   ├── UTM Soraya.ttf
+│   │   ├── UTM Spring.ttf
+│   │   ├── UTM Staccato.ttf
+│   │   ├── UTM Swashes.ttf
+│   │   ├── UTM Swiss 721 Black Condensed.ttf
+│   │   ├── UTM Swiss Condensed.ttf
+│   │   ├── UTM Swiss CondensedBold.ttf
+│   │   ├── UTM Talling.ttf
+│   │   ├── UTM TallingBold.ttf
+│   │   ├── UTM Tam Le.ttf
+│   │   ├── UTM Thanh Nhac TL.ttf
+│   │   ├── UTM Times.ttf
+│   │   ├── UTM TimesItalic.ttf
+│   │   ├── UTM Trajan Pro Bold.ttf
+│   │   ├── UTM ViceroyJF.ttf
+│   │   ├── UTM Wedding K&T.ttf
+│   │   ├── UTM Windsor BT.ttf
+│   │   ├── UTM Yen Tu.ttf
+│   │   ├── UTM Yves KT.ttf
+│   │   ├── UTM Yves KT_Bold.ttf
+│   │   ├── UTM Yves KT_Bold_Italic.ttf
+│   │   ├── UTM Zebrawood.ttf
+│   │   ├── UTM Zirkon.ttf
+│   │   ├── UTMFacebookK&TItalic.ttf
+│   │   ├── UTMTimesBold Italic.ttf
+│   │   ├── UTMTimesBold.ttf
+│   │   ├── UVNAiCapNang.TTF
+│   │   ├── UVNAiCapNhe.TTF
+│   │   ├── UVNAiCap_B.TTF
+│   │   ├── UVNAiCap_R.TTF
+│   │   ├── UVNAnhHaiNhe_I.TTF
+│   │   ├── UVNAnhHaiNhe_R.TTF
+│   │   ├── UVNAnhHai_B.TTF
+│   │   ├── UVNAnhHai_BI.TTF
+│   │   ├── UVNAnhHai_I.TTF
+│   │   ├── UVNAnhHai_R.TTF
+│   │   ├── UVNAnhSang.TTF
+│   │   ├── UVNBaLe.TTF
+│   │   ├── UVNBachDangNang_I.TTF
+│   │   ├── UVNBachDangNang_R.TTF
+│   │   ├── UVNBachDang_B.TTF
+│   │   ├── UVNBachDang_BI.TTF
+│   │   ├── UVNBachDang_I.TTF
+│   │   ├── UVNBachDang_R.TTF
+│   │   ├── UVNBachTuyetNang_I.TTF
+│   │   ├── UVNBachTuyetNang_R.TTF
+│   │   ├── UVNBachTuyet_B.TTF
+│   │   ├── UVNBachTuyet_BI.TTF
+│   │   ├── UVNBachTuyet_I.TTF
+│   │   ├── UVNBachTuyet_R.TTF
+│   │   ├── UVNBaiHoc_B.TTF
+│   │   ├── UVNBaiHoc_BI.TTF
+│   │   ├── UVNBaiHoc_I.TTF
+│   │   ├── UVNBaiHoc_R.TTF
+│   │   ├── UVNBaiSau_B.TTF
+│   │   ├── UVNBaiSau_N.TTF
+│   │   ├── UVNBaiSau_Nh.TTF
+│   │   ├── UVNBaiSau_R.TTF
+│   │   ├── UVNBanTay.TTF
+│   │   ├── UVNBanhMi.TTF
+│   │   ├── UVNBayBuomHep_B.TTF
+│   │   ├── UVNBayBuomHep_N.TTF
+│   │   ├── UVNBayBuomHep_R.TTF
+│   │   ├── UVNBayBuom_B.TTF
+│   │   ├── UVNBayBuom_N.TTF
+│   │   ├── UVNBayBuom_R.TTF
+│   │   ├── UVNBenXuan_B.TTF
+│   │   ├── UVNBenXuan_R.TTF
+│   │   ├── UVNBinhDuong.TTF
+│   │   ├── UVNBoQuen.TTF
+│   │   ├── UVNBucThu.TTF
+│   │   ├── UVNBuiDoi.TTF
+│   │   ├── UVNButLong1.TTF
+│   │   ├── UVNButLong2.TTF
+│   │   ├── UVNCHUKY.TTF
+│   │   ├── UVNCatBienNhe_I.TTF
+│   │   ├── UVNCatBienNhe_R.TTF
+│   │   ├── UVNCatBien_B.TTF
+│   │   ├── UVNCatBien_BI.TTF
+│   │   ├── UVNCatBien_I.TTF
+│   │   ├── UVNCatBien_R.TTF
+│   │   ├── UVNChimBienNang.TTF
+│   │   ├── UVNChimBienNhe.TTF
+│   │   ├── UVNChimBien_B.TTF
+│   │   ├── UVNChimBien_R.TTF
+│   │   ├── UVNChinhLuan_B.TTF
+│   │   ├── UVNChinhLuan_BI.TTF
+│   │   ├── UVNChinhLuan_I.TTF
+│   │   ├── UVNChinhLuan_R.TTF
+│   │   ├── UVNCoDien_B.TTF
+│   │   ├── UVNCoDien_R.TTF
+│   │   ├── UVNConThuy.TTF
+│   │   ├── UVNDaLat_B.TTF
+│   │   ├── UVNDaLat_R.TTF
+│   │   ├── UVNDamCuoi_H.TTF
+│   │   ├── UVNDamCuoi_R.TTF
+│   │   ├── UVNDinhHon.TTF
+│   │   ├── UVNDoiMoi.TTF
+│   │   ├── UVNDungDan.TTF
+│   │   ├── UVNDzungDakao.TTF
+│   │   ├── UVNGiaDinhHep_B.TTF
+│   │   ├── UVNGiaDinhHep_BI.TTF
+│   │   ├── UVNGiaDinhHep_I.TTF
+│   │   ├── UVNGiaDinhHep_R.TTF
+│   │   ├── UVNGiaDinh_B.TTF
+│   │   ├── UVNGiaDinh_BI.TTF
+│   │   ├── UVNGiaDinh_I.TTF
+│   │   ├── UVNGiaDinh_R.TTF
+│   │   ├── UVNGiayTrang_B.TTF
+│   │   ├── UVNGiayTrang_R.TTF
+│   │   ├── UVNGioMayNhe_I.TTF
+│   │   ├── UVNGioMayNhe_R.TTF
+│   │   ├── UVNGioMay_B.TTF
+│   │   ├── UVNGioMay_BI.TTF
+│   │   ├── UVNGioMay_I.TTF
+│   │   ├── UVNGioMay_R.TTF
+│   │   ├── UVNGiongSong_B.TTF
+│   │   ├── UVNGiongSong_BI.TTF
+│   │   ├── UVNGiongSong_I.TTF
+│   │   ├── UVNGiongSong_R.TTF
+│   │   ├── UVNHOAKY.TTF
+│   │   ├── UVNHaiBaTrung.TTF
+│   │   ├── UVNHaiLong.TTF
+│   │   ├── UVNHanViet.TTF
+│   │   ├── UVNHoaDao.TTF
+│   │   ├── UVNHoaTay1.TTF
+│   │   ├── UVNHongHaHep_B.TTF
+│   │   ├── UVNHongHaHep_BI.TTF
+│   │   ├── UVNHongHaHep_I.TTF
+│   │   ├── UVNHongHaHep_R.TTF
+│   │   ├── UVNHongHa_B.TTF
+│   │   ├── UVNHongHa_BI.TTF
+│   │   ├── UVNHongHa_I.TTF
+│   │   ├── UVNHongHa_R.TTF
+│   │   ├── UVNHuongQue_B.TTF
+│   │   ├── UVNHuongQue_N.TTF
+│   │   ├── UVNHuongQue_R.TTF
+│   │   ├── UVNKeChuyen1.TTF
+│   │   ├── UVNKeChuyen2.TTF
+│   │   ├── UVNKeChuyen3.TTF
+│   │   ├── UVNKieu_B.TTF
+│   │   ├── UVNKieu_R.TTF
+│   │   ├── UVNKyThuat.TTF
+│   │   ├── UVNLYDO_.TTF
+│   │   ├── UVNLaXanh_B.TTF
+│   │   ├── UVNLaXanh_BI.TTF
+│   │   ├── UVNLaXanh_I.TTF
+│   │   ├── UVNLaXanh_R.TTF
+│   │   ├── UVNLacLongQuan_B.TTF
+│   │   ├── UVNLacLongQuan_R.TTF
+│   │   ├── UVNMangCauNang_I.TTF
+│   │   ├── UVNMangCauNang_R.TTF
+│   │   ├── UVNMangCau_B.TTF
+│   │   ├── UVNMangCau_BI.TTF
+│   │   ├── UVNMangCau_I.TTF
+│   │   ├── UVNMangCau_R.TTF
+│   │   ├── UVNMangTre.TTF
+│   │   ├── UVNMauTim1.TTF
+│   │   ├── UVNMauTim2.TTF
+│   │   ├── UVNMayChuP_B.TTF
+│   │   ├── UVNMayChuP_BI.TTF
+│   │   ├── UVNMayChuP_I.TTF
+│   │   ├── UVNMayChuP_R.TTF
+│   │   ├── UVNMinhMap.TTF
+│   │   ├── UVNMoiHong.TTF
+│   │   ├── UVNMotMoi.TTF
+│   │   ├── UVNMuaThu.TTF
+│   │   ├── UVNMucCham.TTF
+│   │   ├── UVNNguyenDu.TTF
+│   │   ├── UVNNhanNang_I.TTF
+│   │   ├── UVNNhanNang_R.TTF
+│   │   ├── UVNNhan_B.TTF
+│   │   ├── UVNNhan_BI.TTF
+│   │   ├── UVNNhan_I.TTF
+│   │   ├── UVNNhan_R.TTF
+│   │   ├── UVNNhatKy_B.TTF
+│   │   ├── UVNNhatKy_BI.TTF
+│   │   ├── UVNNhatKy_I.TTF
+│   │   ├── UVNNhatKy_R.TTF
+│   │   ├── UVNPhuongTay.TTF
+│   │   ├── UVNSachVo_B.TTF
+│   │   ├── UVNSachVo_BI.TTF
+│   │   ├── UVNSachVo_I.TTF
+│   │   ├── UVNSachVo_R.TTF
+│   │   ├── UVNSaigon_B.TTF
+│   │   ├── UVNSaigon_BI.TTF
+│   │   ├── UVNSaigon_I.TTF
+│   │   ├── UVNSaigon_R.TTF
+│   │   ├── UVNSangSong_B.TTF
+│   │   ├── UVNSangSong_N.TTF
+│   │   ├── UVNSangSong_R.TTF
+│   │   ├── UVNThangGieng_I.TTF
+│   │   ├── UVNThangGieng_R.TTF
+│   │   ├── UVNThangVu.TTF
+│   │   ├── UVNThanhBinh.TTF
+│   │   ├── UVNThanhPhoNang.TTF
+│   │   ├── UVNThanhPho_B.TTF
+│   │   ├── UVNThanhPho_R.TTF
+│   │   ├── UVNThayGiaoNang_I.TTF
+│   │   ├── UVNThayGiaoNang_R.TTF
+│   │   ├── UVNThayGiaoNhe_I.TTF
+│   │   ├── UVNThayGiaoNhe_R.TTF
+│   │   ├── UVNThayGiao_B.TTF
+│   │   ├── UVNThayGiao_BI.TTF
+│   │   ├── UVNThayGiao_I.TTF
+│   │   ├── UVNThayGiao_R.TTF
+│   │   ├── UVNThoiDai1.TTF
+│   │   ├── UVNThoiDai2.TTF
+│   │   ├── UVNThoiNayNang_I.TTF
+│   │   ├── UVNThoiNayNang_R.TTF
+│   │   ├── UVNThoiNay_B.TTF
+│   │   ├── UVNThoiNay_BI.TTF
+│   │   ├── UVNThoiNay_I.TTF
+│   │   ├── UVNThoiNay_R.TTF
+│   │   ├── UVNThuTu.TTF
+│   │   ├── UVNTinTucHepThem_B.TTF
+│   │   ├── UVNTinTucHepThem_R.TTF
+│   │   ├── UVNTinTucHep_B.TTF
+│   │   ├── UVNTinTucHep_BI.TTF
+│   │   ├── UVNTinTucHep_I.TTF
+│   │   ├── UVNTinTucHep_R.TTF
+│   │   ├── UVNTinTucNhe_I.TTF
+│   │   ├── UVNTinTucNhe_R.TTF
+│   │   ├── UVNTinTuc_B.TTF
+│   │   ├── UVNTinTuc_BI.TTF
+│   │   ├── UVNTinTuc_I.TTF
+│   │   ├── UVNTinTuc_R.TTF
+│   │   ├── UVNVanChuongNang_R.TTF
+│   │   ├── UVNVanChuong_B.TTF
+│   │   ├── UVNVanChuong_I.TTF
+│   │   ├── UVNVanChuong_R.TTF
+│   │   ├── UVNVan_B.TTF
+│   │   ├── UVNVan_R.TTF
+│   │   ├── UVNViVi.TTF
+│   │   ├── UVNVienDu.TTF
+│   │   ├── UVNVietSach_B.TTF
+│   │   ├── UVNVietSach_BI.TTF
+│   │   ├── UVNVietSach_I.TTF
+│   │   ├── UVNVietSach_R.TTF
+│   │   ├── UVNVungTau.TTF
+│   │   ├── aachenb.ttf
+│   │   ├── agoldfac.ttf
+│   │   ├── akronism.ttf
+│   │   ├── algerian.ttf
+│   │   ├── amazone.ttf
+│   │   ├── americau.ttf
+│   │   ├── amherst.ttf
+│   │   ├── antique.ttf
+│   │   ├── arabia.ttf
+│   │   ├── architep.ttf
+│   │   ├── arial round.ttf
+│   │   ├── arial.ttf
+│   │   ├── arialbd.ttf
+│   │   ├── arialbi.ttf
+│   │   ├── ariali.ttf
+│   │   ├── arialr.ttf
+│   │   ├── aristoni.ttf
+│   │   ├── arrusb.ttf
+│   │   ├── arrusn.ttf
+│   │   ├── avantg.ttf
+│   │   ├── avantgd.ttf
+│   │   ├── aztekb.ttf
+│   │   ├── banditbi.ttf
+│   │   ├── bankgotm.ttf
+│   │   ├── barmeneb.ttf
+│   │   ├── bauhauhb.ttf
+│   │   ├── bauhausl.ttf
+│   │   ├── bauhausm.ttf
+│   │   ├── bedrock.ttf
+│   │   ├── bellevui.ttf
+│   │   ├── benguiat.ttf
+│   │   ├── berthosi.ttf
+│   │   ├── bigapple.ttf
+│   │   ├── bodoni.ttf
+│   │   ├── bodonieb.ttf
+│   │   ├── bodonpcb.ttf
+│   │   ├── bookman.ttf
+│   │   ├── boton.ttf
+│   │   ├── braggado.ttf
+│   │   ├── broadb.ttf
+│   │   ├── brushsbi.ttf
+│   │   ├── casablan.ttf
+│   │   ├── centurio.ttf
+│   │   ├── chelthm.ttf
+│   │   ├── circle.ttf
+│   │   ├── circle3d.ttf
+│   │   ├── clearfag.ttf
+│   │   ├── colonna.ttf
+│   │   ├── comic.ttf
+│   │   ├── comicbd.ttf
+│   │   ├── commercb.ttf
+│   │   ├── commerce.ttf
+│   │   ├── commercs.ttf
+│   │   ├── compacta.ttf
+│   │   ├── corporat.ttf
+│   │   ├── corsiva.ttf
+│   │   ├── countdow.ttf
+│   │   ├── cour.ttf
+│   │   ├── courbd.ttf
+│   │   ├── courbi.ttf
+│   │   ├── couri.ttf
+│   │   ├── crystal.ttf
+│   │   ├── dauphin.ttf
+│   │   ├── desdemon.ttf
+│   │   ├── domcasua.ttf
+│   │   ├── dur.ttf
+│   │   ├── elephant.ttf
+│   │   ├── erascont.ttf
+│   │   ├── erieblac.ttf
+│   │   ├── exoticb.ttf
+│   │   ├── fettefrb.ttf
+│   │   ├── fillmore.ttf
+│   │   ├── floral.ttf
+│   │   ├── flowdeco.ttf
+│   │   ├── frankfub.ttf
+│   │   ├── freehani.ttf
+│   │   ├── freestyl.ttf
+│   │   ├── frutiger.ttf
+│   │   ├── fujiyalc.ttf
+│   │   ├── fujiyama.ttf
+│   │   ├── futurab.ttf
+│   │   ├── futurabb.ttf
+│   │   ├── galleria.ttf
+│   │   ├── garamond.ttf
+│   │   ├── gatineau.ttf
+│   │   ├── geoslabc.ttf
+│   │   ├── geoslabe.ttf
+│   │   ├── geoslabl.ttf
+│   │   ├── gillsanc.ttf
+│   │   ├── gillsans.ttf
+│   │   ├── goudyold.ttf
+│   │   ├── goudytex.ttf
+│   │   ├── harpoon.ttf
+│   │   ├── harringt.ttf
+│   │   ├── helvetin.ttf
+│   │   ├── imagoeb.ttf
+│   │   ├── impact.ttf
+│   │   ├── isadora.ttf
+│   │   ├── jamai.ttf
+│   │   ├── jupiter.ttf
+│   │   ├── kaufmann.ttf
+│   │   ├── kids.ttf
+│   │   ├── korinna.ttf
+│   │   ├── kunmedii.ttf
+│   │   ├── linoscri.ttf
+│   │   ├── linotext.ttf
+│   │   ├── lithogrb.ttf
+│   │   ├── lucidahw.ttf
+│   │   ├── memorand.ttf
+│   │   ├── merscrb.ttf
+│   │   ├── microsslv.ttf
+│   │   ├── murray.ttf
+│   │   ├── mystical.ttf
+│   │   ├── nebraski.ttf
+│   │   ├── newcentn.ttf
+│   │   ├── newsgoth.ttf
+│   │   ├── nueva.ttf
+│   │   ├── nuevabe(2).ttf
+│   │   ├── nuevabe.ttf
+│   │   ├── nuptiasi.ttf
+│   │   ├── officins.ttf
+│   │   ├── officisa.ttf
+│   │   ├── onyx.ttf
+│   │   ├── optima.ttf
+│   │   ├── pala.ttf
+│   │   ├── palab.ttf
+│   │   ├── palabi.ttf
+│   │   ├── palai.ttf
+│   │   ├── parkaven.ttf
+│   │   ├── pepita.ttf
+│   │   ├── perpetua.ttf
+│   │   ├── postantb.ttf
+│   │   ├── presiden.ttf
+│   │   ├── revueb.ttf
+│   │   ├── rockston.ttf
+│   │   ├── rockwebb.ttf
+│   │   ├── russells.ttf
+│   │   ├── sansseri.ttf
+│   │   ├── scripti.ttf
+│   │   ├── segoeuil.ttf
+│   │   ├── serpensl.ttf
+│   │   ├── serpentb.ttf
+│   │   ├── serpents.ttf
+│   │   ├── shelleai.ttf
+│   │   ├── signatli.ttf
+│   │   ├── slogan.ttf
+│   │   ├── snell.ttf
+│   │   ├── souvenir.ttf
+│   │   ├── standout.ttf
+│   │   ├── starstrp.ttf
+│   │   ├── stencilb.ttf
+│   │   ├── stop.ttf
+│   │   ├── switzerl.ttf
+│   │   ├── tahoma.ttf
+│   │   ├── tahomabd.ttf
+│   │   ├── tekton.ttf
+│   │   ├── tiffany.ttf
+│   │   ├── times.ttf
+│   │   ├── timesbd.ttf
+│   │   ├── timesbi.ttf
+│   │   ├── timesi.ttf
+│   │   ├── timesnar.ttf
+│   │   ├── trebuc.ttf
+│   │   ├── trebucbd.ttf
+│   │   ├── trebucbi.ttf
+│   │   ├── trebucit.ttf
+│   │   ├── tubes.ttf
+│   │   ├── umbra.ttf
+│   │   ├── universi.ttf
+│   │   ├── verdana.ttf
+│   │   ├── verdanab.ttf
+│   │   ├── verdanai.ttf
+│   │   ├── verdanaz.ttf
+│   │   ├── victoria.ttf
+│   │   ├── vivabee.ttf
+│   │   ├── vivienne.ttf
+│   │   ├── vogueeb.ttf
+│   │   ├── walbaum.ttf
+│   │   ├── windsorb.ttf
+│   │   ├── woodtypd.ttf
+│   │   └── zapfchmi.ttf
+│   ├── icons
+│   │   ├── 1766502511645.png
+│   │   ├── 1766502865262.png
+│   │   ├── 1766503820775.png
+│   │   └── 1766505207870.png
+│   ├── background.png
+│   └── settings.json
+├── electron
+│   └── main.cjs
+├── public
+│   └── vite.svg
+├── release
+│   ├── win-unpacked
+│   │   ├── locales
+│   │   │   ├── af.pak
+│   │   │   ├── am.pak
+│   │   │   ├── ar.pak
+│   │   │   ├── bg.pak
+│   │   │   ├── bn.pak
+│   │   │   ├── ca.pak
+│   │   │   ├── cs.pak
+│   │   │   ├── da.pak
+│   │   │   ├── de.pak
+│   │   │   ├── el.pak
+│   │   │   ├── en-GB.pak
+│   │   │   ├── en-US.pak
+│   │   │   ├── es-419.pak
+│   │   │   ├── es.pak
+│   │   │   ├── et.pak
+│   │   │   ├── fa.pak
+│   │   │   ├── fi.pak
+│   │   │   ├── fil.pak
+│   │   │   ├── fr.pak
+│   │   │   ├── gu.pak
+│   │   │   ├── he.pak
+│   │   │   ├── hi.pak
+│   │   │   ├── hr.pak
+│   │   │   ├── hu.pak
+│   │   │   ├── id.pak
+│   │   │   ├── it.pak
+│   │   │   ├── ja.pak
+│   │   │   ├── kn.pak
+│   │   │   ├── ko.pak
+│   │   │   ├── lt.pak
+│   │   │   ├── lv.pak
+│   │   │   ├── ml.pak
+│   │   │   ├── mr.pak
+│   │   │   ├── ms.pak
+│   │   │   ├── nb.pak
+│   │   │   ├── nl.pak
+│   │   │   ├── pl.pak
+│   │   │   ├── pt-BR.pak
+│   │   │   ├── pt-PT.pak
+│   │   │   ├── ro.pak
+│   │   │   ├── ru.pak
+│   │   │   ├── sk.pak
+│   │   │   ├── sl.pak
+│   │   │   ├── sr.pak
+│   │   │   ├── sv.pak
+│   │   │   ├── sw.pak
+│   │   │   ├── ta.pak
+│   │   │   ├── te.pak
+│   │   │   ├── th.pak
+│   │   │   ├── tr.pak
+│   │   │   ├── uk.pak
+│   │   │   ├── ur.pak
+│   │   │   ├── vi.pak
+│   │   │   ├── zh-CN.pak
+│   │   │   └── zh-TW.pak
+│   │   ├── resources
+│   │   │   ├── data
+│   │   │   │   ├── bookmarks
+│   │   │   │   │   ├── 1766502511645.json
+│   │   │   │   │   ├── 1766502865262.json
+│   │   │   │   │   ├── 1766503820775.json
+│   │   │   │   │   └── 1766505207870.json
+│   │   │   │   ├── fonts
+│   │   │   │   │   ├── BVMyriB.ttf
+│   │   │   │   │   ├── BVfuji.ttf
+│   │   │   │   │   ├── Candara-Viet.ttf
+│   │   │   │   │   ├── GRGAREF.TTF
+│   │   │   │   │   ├── GeosansLight.ttf
+│   │   │   │   │   ├── OPTIVBI_.TTF
+│   │   │   │   │   ├── OPTIVB__.TTF
+│   │   │   │   │   ├── OPTIVI__.TTF
+│   │   │   │   │   ├── OPTIVRG_.TTF
+│   │   │   │   │   ├── TMC-Pepsi Tu Linh.ttf
+│   │   │   │   │   ├── TMC-Thaleia.ttf
+│   │   │   │   │   ├── TMC-TrajanPro-Bold.ttf
+│   │   │   │   │   ├── Thuphap.ttf
+│   │   │   │   │   ├── Tmcdavidab.ttf
+│   │   │   │   │   ├── Tmchazelnlet.ttf
+│   │   │   │   │   ├── Tmcholtzschue.ttf
+│   │   │   │   │   ├── UTM A&S Graceland.ttf
+│   │   │   │   │   ├── UTM A&S Heartbeat.ttf
+│   │   │   │   │   ├── UTM A&S Signwriter.ttf
+│   │   │   │   │   ├── UTM Agin.ttf
+│   │   │   │   │   ├── UTM Aircona.ttf
+│   │   │   │   │   ├── UTM Akashi.ttf
+│   │   │   │   │   ├── UTM Alba Matter.ttf
+│   │   │   │   │   ├── UTM Alberta Heavy.ttf
+│   │   │   │   │   ├── UTM Alexander.ttf
+│   │   │   │   │   ├── UTM Alpine KT.ttf
+│   │   │   │   │   ├── UTM Alter Gothic.ttf
+│   │   │   │   │   ├── UTM Ambrose.ttf
+│   │   │   │   │   ├── UTM Ambrosia.ttf
+│   │   │   │   │   ├── UTM American Sans.ttf
+│   │   │   │   │   ├── UTM Americana.ttf
+│   │   │   │   │   ├── UTM AmericanaB.ttf
+│   │   │   │   │   ├── UTM AmericanaBEx.ttf
+│   │   │   │   │   ├── UTM AmericanaItalic.ttf
+│   │   │   │   │   ├── UTM Amerika Sans.ttf
+│   │   │   │   │   ├── UTM Amherst.ttf
+│   │   │   │   │   ├── UTM Androgyne.ttf
+│   │   │   │   │   ├── UTM Aptima.ttf
+│   │   │   │   │   ├── UTM AptimaBold.ttf
+│   │   │   │   │   ├── UTM AptimaBoldItalic.ttf
+│   │   │   │   │   ├── UTM AptimaItalic.ttf
+│   │   │   │   │   ├── UTM Aristote.ttf
+│   │   │   │   │   ├── UTM Arruba.ttf
+│   │   │   │   │   ├── UTM Atlas.ttf
+│   │   │   │   │   ├── UTM Atlas_Solid.ttf
+│   │   │   │   │   ├── UTM Aurora.ttf
+│   │   │   │   │   ├── UTM Avenida.ttf
+│   │   │   │   │   ├── UTM Avo.ttf
+│   │   │   │   │   ├── UTM AvoBold.ttf
+│   │   │   │   │   ├── UTM AvoBold_Italic.ttf
+│   │   │   │   │   ├── UTM AvoItalic.ttf
+│   │   │   │   │   ├── UTM Azuki.ttf
+│   │   │   │   │   ├── UTM BanqueB.ttf
+│   │   │   │   │   ├── UTM BanqueR.ttf
+│   │   │   │   │   ├── UTM Beautiful Caps.ttf
+│   │   │   │   │   ├── UTM Bell.ttf
+│   │   │   │   │   ├── UTM Bienvenue.ttf
+│   │   │   │   │   ├── UTM Billhead 1910.ttf
+│   │   │   │   │   ├── UTM Bitsumishi Pro.ttf
+│   │   │   │   │   ├── UTM Brewers KT.ttf
+│   │   │   │   │   ├── UTM BryantLG.ttf
+│   │   │   │   │   ├── UTM BryantLG_B.ttf
+│   │   │   │   │   ├── UTM Bustamalaka.ttf
+│   │   │   │   │   ├── UTM Cabaret.ttf
+│   │   │   │   │   ├── UTM Cafeta.ttf
+│   │   │   │   │   ├── UTM Camellia.ttf
+│   │   │   │   │   ├── UTM Candombe.ttf
+│   │   │   │   │   ├── UTM Caviar.ttf
+│   │   │   │   │   ├── UTM Centur.ttf
+│   │   │   │   │   ├── UTM CenturBold.ttf
+│   │   │   │   │   ├── UTM CenturBoldItalic.ttf
+│   │   │   │   │   ├── UTM CenturItalic.ttf
+│   │   │   │   │   ├── UTM Charlemagne.ttf
+│   │   │   │   │   ├── UTM Charlotte.ttf
+│   │   │   │   │   ├── UTM Chickenhawk.ttf
+│   │   │   │   │   ├── UTM ClassizismAntiqua.ttf
+│   │   │   │   │   ├── UTM Colossalis.ttf
+│   │   │   │   │   ├── UTM Conestoga.ttf
+│   │   │   │   │   ├── UTM Cookies.ttf
+│   │   │   │   │   ├── UTM Cool Blue.ttf
+│   │   │   │   │   ├── UTM Cooper Black.ttf
+│   │   │   │   │   ├── UTM Cooper BlackItalic.ttf
+│   │   │   │   │   ├── UTM Copperplate.ttf
+│   │   │   │   │   ├── UTM CopperplateB.ttf
+│   │   │   │   │   ├── UTM Dai Co Viet.ttf
+│   │   │   │   │   ├── UTM Davida.ttf
+│   │   │   │   │   ├── UTM Demian KT.ttf
+│   │   │   │   │   ├── UTM Deutsch Gothic.ttf
+│   │   │   │   │   ├── UTM Diana.ttf
+│   │   │   │   │   ├── UTM Dinh Tran.ttf
+│   │   │   │   │   ├── UTM Duepuntozero.ttf
+│   │   │   │   │   ├── UTM DuepuntozeroBold.ttf
+│   │   │   │   │   ├── UTM EdwardianB.ttf
+│   │   │   │   │   ├── UTM EdwardianKT.ttf
+│   │   │   │   │   ├── UTM Eremitage.ttf
+│   │   │   │   │   ├── UTM Ericsson Capital.ttf
+│   │   │   │   │   ├── UTM Erie Black.ttf
+│   │   │   │   │   ├── UTM Essendine Caps.ttf
+│   │   │   │   │   ├── UTM Essendine CapsBold.ttf
+│   │   │   │   │   ├── UTM FacebookB K&T.ttf
+│   │   │   │   │   ├── UTM FacebookK&TBoldItalic.ttf
+│   │   │   │   │   ├── UTM FacebookR K&T.ttf
+│   │   │   │   │   ├── UTM Fancy Full.ttf
+│   │   │   │   │   ├── UTM Fire House.ttf
+│   │   │   │   │   ├── UTM Flamenco.ttf
+│   │   │   │   │   ├── UTM Flavour.ttf
+│   │   │   │   │   ├── UTM French Vanilla.ttf
+│   │   │   │   │   ├── UTM Futura Extra.ttf
+│   │   │   │   │   ├── UTM Gille Classic.ttf
+│   │   │   │   │   ├── UTM Gloria.ttf
+│   │   │   │   │   ├── UTM God's WordBold.ttf
+│   │   │   │   │   ├── UTM God's WordBoldItalic.ttf
+│   │   │   │   │   ├── UTM God's WordR.ttf
+│   │   │   │   │   ├── UTM God's WordRItalic.ttf
+│   │   │   │   │   ├── UTM Gradoo.ttf
+│   │   │   │   │   ├── UTM Guanine.ttf
+│   │   │   │   │   ├── UTM Habano.ttf
+│   │   │   │   │   ├── UTM Hanzel.ttf
+│   │   │   │   │   ├── UTM Helve.ttf
+│   │   │   │   │   ├── UTM HelveBold.ttf
+│   │   │   │   │   ├── UTM HelveBold_Italic.ttf
+│   │   │   │   │   ├── UTM Helve_Italic.ttf
+│   │   │   │   │   ├── UTM HelvetIns.ttf
+│   │   │   │   │   ├── UTM Impact.ttf
+│   │   │   │   │   ├── UTM Iron Gothic.ttf
+│   │   │   │   │   ├── UTM IsadoraBold.ttf
+│   │   │   │   │   ├── UTM IsadoraR.ttf
+│   │   │   │   │   ├── UTM Kabel KT.ttf
+│   │   │   │   │   ├── UTM Karate.ttf
+│   │   │   │   │   ├── UTM Kona KT.ttf
+│   │   │   │   │   ├── UTM Korataki.ttf
+│   │   │   │   │   ├── UTM Korataki_Bold.ttf
+│   │   │   │   │   ├── UTM LinotypeZapfino KT.ttf
+│   │   │   │   │   ├── UTM Loko.ttf
+│   │   │   │   │   ├── UTM Mabella.ttf
+│   │   │   │   │   ├── UTM Marlboro.ttf
+│   │   │   │   │   ├── UTM Micra.ttf
+│   │   │   │   │   ├── UTM Mobifone KT.ttf
+│   │   │   │   │   ├── UTM Mother.ttf
+│   │   │   │   │   ├── UTM NGHA 01.ttf
+│   │   │   │   │   ├── UTM Neo Sans Intel.ttf
+│   │   │   │   │   ├── UTM Neo Sans IntelBold.ttf
+│   │   │   │   │   ├── UTM Neo Sans IntelBold_Italic.ttf
+│   │   │   │   │   ├── UTM Neo Sans Intel_Italic.ttf
+│   │   │   │   │   ├── UTM Netmuc KT.ttf
+│   │   │   │   │   ├── UTM Neutra.ttf
+│   │   │   │   │   ├── UTM NguyenHa 02.ttf
+│   │   │   │   │   ├── UTM Niagara.ttf
+│   │   │   │   │   ├── UTM Nokia Standard.ttf
+│   │   │   │   │   ├── UTM Nokia StandardB.ttf
+│   │   │   │   │   ├── UTM Nokia.ttf
+│   │   │   │   │   ├── UTM Novido.ttf
+│   │   │   │   │   ├── UTM Nyala.ttf
+│   │   │   │   │   ├── UTM Omni.ttf
+│   │   │   │   │   ├── UTM Ong Do Gia.ttf
+│   │   │   │   │   ├── UTM Ong Do Tre.ttf
+│   │   │   │   │   ├── UTM Oregon.ttf
+│   │   │   │   │   ├── UTM Pacific Standard.ttf
+│   │   │   │   │   ├── UTM Penumbra.ttf
+│   │   │   │   │   ├── UTM PenumbraBold.ttf
+│   │   │   │   │   ├── UTM Pierre.ttf
+│   │   │   │   │   ├── UTM Raven.ttf
+│   │   │   │   │   ├── UTM Rockwell.ttf
+│   │   │   │   │   ├── UTM Roman Classic.ttf
+│   │   │   │   │   ├── UTM Sarah.ttf
+│   │   │   │   │   ├── UTM Scriptina KT.ttf
+│   │   │   │   │   ├── UTM SeagullBold.ttf
+│   │   │   │   │   ├── UTM SeagullBoldItalic.ttf
+│   │   │   │   │   ├── UTM Sharnay.ttf
+│   │   │   │   │   ├── UTM Showcard.ttf
+│   │   │   │   │   ├── UTM Silk Script.ttf
+│   │   │   │   │   ├── UTM Sloop 1.ttf
+│   │   │   │   │   ├── UTM Soraya.ttf
+│   │   │   │   │   ├── UTM Spring.ttf
+│   │   │   │   │   ├── UTM Staccato.ttf
+│   │   │   │   │   ├── UTM Swashes.ttf
+│   │   │   │   │   ├── UTM Swiss 721 Black Condensed.ttf
+│   │   │   │   │   ├── UTM Swiss Condensed.ttf
+│   │   │   │   │   ├── UTM Swiss CondensedBold.ttf
+│   │   │   │   │   ├── UTM Talling.ttf
+│   │   │   │   │   ├── UTM TallingBold.ttf
+│   │   │   │   │   ├── UTM Tam Le.ttf
+│   │   │   │   │   ├── UTM Thanh Nhac TL.ttf
+│   │   │   │   │   ├── UTM Times.ttf
+│   │   │   │   │   ├── UTM TimesItalic.ttf
+│   │   │   │   │   ├── UTM Trajan Pro Bold.ttf
+│   │   │   │   │   ├── UTM ViceroyJF.ttf
+│   │   │   │   │   ├── UTM Wedding K&T.ttf
+│   │   │   │   │   ├── UTM Windsor BT.ttf
+│   │   │   │   │   ├── UTM Yen Tu.ttf
+│   │   │   │   │   ├── UTM Yves KT.ttf
+│   │   │   │   │   ├── UTM Yves KT_Bold.ttf
+│   │   │   │   │   ├── UTM Yves KT_Bold_Italic.ttf
+│   │   │   │   │   ├── UTM Zebrawood.ttf
+│   │   │   │   │   ├── UTM Zirkon.ttf
+│   │   │   │   │   ├── UTMFacebookK&TItalic.ttf
+│   │   │   │   │   ├── UTMTimesBold Italic.ttf
+│   │   │   │   │   ├── UTMTimesBold.ttf
+│   │   │   │   │   ├── UVNAiCapNang.TTF
+│   │   │   │   │   ├── UVNAiCapNhe.TTF
+│   │   │   │   │   ├── UVNAiCap_B.TTF
+│   │   │   │   │   ├── UVNAiCap_R.TTF
+│   │   │   │   │   ├── UVNAnhHaiNhe_I.TTF
+│   │   │   │   │   ├── UVNAnhHaiNhe_R.TTF
+│   │   │   │   │   ├── UVNAnhHai_B.TTF
+│   │   │   │   │   ├── UVNAnhHai_BI.TTF
+│   │   │   │   │   ├── UVNAnhHai_I.TTF
+│   │   │   │   │   ├── UVNAnhHai_R.TTF
+│   │   │   │   │   ├── UVNAnhSang.TTF
+│   │   │   │   │   ├── UVNBaLe.TTF
+│   │   │   │   │   ├── UVNBachDangNang_I.TTF
+│   │   │   │   │   ├── UVNBachDangNang_R.TTF
+│   │   │   │   │   ├── UVNBachDang_B.TTF
+│   │   │   │   │   ├── UVNBachDang_BI.TTF
+│   │   │   │   │   ├── UVNBachDang_I.TTF
+│   │   │   │   │   ├── UVNBachDang_R.TTF
+│   │   │   │   │   ├── UVNBachTuyetNang_I.TTF
+│   │   │   │   │   ├── UVNBachTuyetNang_R.TTF
+│   │   │   │   │   ├── UVNBachTuyet_B.TTF
+│   │   │   │   │   ├── UVNBachTuyet_BI.TTF
+│   │   │   │   │   ├── UVNBachTuyet_I.TTF
+│   │   │   │   │   ├── UVNBachTuyet_R.TTF
+│   │   │   │   │   ├── UVNBaiHoc_B.TTF
+│   │   │   │   │   ├── UVNBaiHoc_BI.TTF
+│   │   │   │   │   ├── UVNBaiHoc_I.TTF
+│   │   │   │   │   ├── UVNBaiHoc_R.TTF
+│   │   │   │   │   ├── UVNBaiSau_B.TTF
+│   │   │   │   │   ├── UVNBaiSau_N.TTF
+│   │   │   │   │   ├── UVNBaiSau_Nh.TTF
+│   │   │   │   │   ├── UVNBaiSau_R.TTF
+│   │   │   │   │   ├── UVNBanTay.TTF
+│   │   │   │   │   ├── UVNBanhMi.TTF
+│   │   │   │   │   ├── UVNBayBuomHep_B.TTF
+│   │   │   │   │   ├── UVNBayBuomHep_N.TTF
+│   │   │   │   │   ├── UVNBayBuomHep_R.TTF
+│   │   │   │   │   ├── UVNBayBuom_B.TTF
+│   │   │   │   │   ├── UVNBayBuom_N.TTF
+│   │   │   │   │   ├── UVNBayBuom_R.TTF
+│   │   │   │   │   ├── UVNBenXuan_B.TTF
+│   │   │   │   │   ├── UVNBenXuan_R.TTF
+│   │   │   │   │   ├── UVNBinhDuong.TTF
+│   │   │   │   │   ├── UVNBoQuen.TTF
+│   │   │   │   │   ├── UVNBucThu.TTF
+│   │   │   │   │   ├── UVNBuiDoi.TTF
+│   │   │   │   │   ├── UVNButLong1.TTF
+│   │   │   │   │   ├── UVNButLong2.TTF
+│   │   │   │   │   ├── UVNCHUKY.TTF
+│   │   │   │   │   ├── UVNCatBienNhe_I.TTF
+│   │   │   │   │   ├── UVNCatBienNhe_R.TTF
+│   │   │   │   │   ├── UVNCatBien_B.TTF
+│   │   │   │   │   ├── UVNCatBien_BI.TTF
+│   │   │   │   │   ├── UVNCatBien_I.TTF
+│   │   │   │   │   ├── UVNCatBien_R.TTF
+│   │   │   │   │   ├── UVNChimBienNang.TTF
+│   │   │   │   │   ├── UVNChimBienNhe.TTF
+│   │   │   │   │   ├── UVNChimBien_B.TTF
+│   │   │   │   │   ├── UVNChimBien_R.TTF
+│   │   │   │   │   ├── UVNChinhLuan_B.TTF
+│   │   │   │   │   ├── UVNChinhLuan_BI.TTF
+│   │   │   │   │   ├── UVNChinhLuan_I.TTF
+│   │   │   │   │   ├── UVNChinhLuan_R.TTF
+│   │   │   │   │   ├── UVNCoDien_B.TTF
+│   │   │   │   │   ├── UVNCoDien_R.TTF
+│   │   │   │   │   ├── UVNConThuy.TTF
+│   │   │   │   │   ├── UVNDaLat_B.TTF
+│   │   │   │   │   ├── UVNDaLat_R.TTF
+│   │   │   │   │   ├── UVNDamCuoi_H.TTF
+│   │   │   │   │   ├── UVNDamCuoi_R.TTF
+│   │   │   │   │   ├── UVNDinhHon.TTF
+│   │   │   │   │   ├── UVNDoiMoi.TTF
+│   │   │   │   │   ├── UVNDungDan.TTF
+│   │   │   │   │   ├── UVNDzungDakao.TTF
+│   │   │   │   │   ├── UVNGiaDinhHep_B.TTF
+│   │   │   │   │   ├── UVNGiaDinhHep_BI.TTF
+│   │   │   │   │   ├── UVNGiaDinhHep_I.TTF
+│   │   │   │   │   ├── UVNGiaDinhHep_R.TTF
+│   │   │   │   │   ├── UVNGiaDinh_B.TTF
+│   │   │   │   │   ├── UVNGiaDinh_BI.TTF
+│   │   │   │   │   ├── UVNGiaDinh_I.TTF
+│   │   │   │   │   ├── UVNGiaDinh_R.TTF
+│   │   │   │   │   ├── UVNGiayTrang_B.TTF
+│   │   │   │   │   ├── UVNGiayTrang_R.TTF
+│   │   │   │   │   ├── UVNGioMayNhe_I.TTF
+│   │   │   │   │   ├── UVNGioMayNhe_R.TTF
+│   │   │   │   │   ├── UVNGioMay_B.TTF
+│   │   │   │   │   ├── UVNGioMay_BI.TTF
+│   │   │   │   │   ├── UVNGioMay_I.TTF
+│   │   │   │   │   ├── UVNGioMay_R.TTF
+│   │   │   │   │   ├── UVNGiongSong_B.TTF
+│   │   │   │   │   ├── UVNGiongSong_BI.TTF
+│   │   │   │   │   ├── UVNGiongSong_I.TTF
+│   │   │   │   │   ├── UVNGiongSong_R.TTF
+│   │   │   │   │   ├── UVNHOAKY.TTF
+│   │   │   │   │   ├── UVNHaiBaTrung.TTF
+│   │   │   │   │   ├── UVNHaiLong.TTF
+│   │   │   │   │   ├── UVNHanViet.TTF
+│   │   │   │   │   ├── UVNHoaDao.TTF
+│   │   │   │   │   ├── UVNHoaTay1.TTF
+│   │   │   │   │   ├── UVNHongHaHep_B.TTF
+│   │   │   │   │   ├── UVNHongHaHep_BI.TTF
+│   │   │   │   │   ├── UVNHongHaHep_I.TTF
+│   │   │   │   │   ├── UVNHongHaHep_R.TTF
+│   │   │   │   │   ├── UVNHongHa_B.TTF
+│   │   │   │   │   ├── UVNHongHa_BI.TTF
+│   │   │   │   │   ├── UVNHongHa_I.TTF
+│   │   │   │   │   ├── UVNHongHa_R.TTF
+│   │   │   │   │   ├── UVNHuongQue_B.TTF
+│   │   │   │   │   ├── UVNHuongQue_N.TTF
+│   │   │   │   │   ├── UVNHuongQue_R.TTF
+│   │   │   │   │   ├── UVNKeChuyen1.TTF
+│   │   │   │   │   ├── UVNKeChuyen2.TTF
+│   │   │   │   │   ├── UVNKeChuyen3.TTF
+│   │   │   │   │   ├── UVNKieu_B.TTF
+│   │   │   │   │   ├── UVNKieu_R.TTF
+│   │   │   │   │   ├── UVNKyThuat.TTF
+│   │   │   │   │   ├── UVNLYDO_.TTF
+│   │   │   │   │   ├── UVNLaXanh_B.TTF
+│   │   │   │   │   ├── UVNLaXanh_BI.TTF
+│   │   │   │   │   ├── UVNLaXanh_I.TTF
+│   │   │   │   │   ├── UVNLaXanh_R.TTF
+│   │   │   │   │   ├── UVNLacLongQuan_B.TTF
+│   │   │   │   │   ├── UVNLacLongQuan_R.TTF
+│   │   │   │   │   ├── UVNMangCauNang_I.TTF
+│   │   │   │   │   ├── UVNMangCauNang_R.TTF
+│   │   │   │   │   ├── UVNMangCau_B.TTF
+│   │   │   │   │   ├── UVNMangCau_BI.TTF
+│   │   │   │   │   ├── UVNMangCau_I.TTF
+│   │   │   │   │   ├── UVNMangCau_R.TTF
+│   │   │   │   │   ├── UVNMangTre.TTF
+│   │   │   │   │   ├── UVNMauTim1.TTF
+│   │   │   │   │   ├── UVNMauTim2.TTF
+│   │   │   │   │   ├── UVNMayChuP_B.TTF
+│   │   │   │   │   ├── UVNMayChuP_BI.TTF
+│   │   │   │   │   ├── UVNMayChuP_I.TTF
+│   │   │   │   │   ├── UVNMayChuP_R.TTF
+│   │   │   │   │   ├── UVNMinhMap.TTF
+│   │   │   │   │   ├── UVNMoiHong.TTF
+│   │   │   │   │   ├── UVNMotMoi.TTF
+│   │   │   │   │   ├── UVNMuaThu.TTF
+│   │   │   │   │   ├── UVNMucCham.TTF
+│   │   │   │   │   ├── UVNNguyenDu.TTF
+│   │   │   │   │   ├── UVNNhanNang_I.TTF
+│   │   │   │   │   ├── UVNNhanNang_R.TTF
+│   │   │   │   │   ├── UVNNhan_B.TTF
+│   │   │   │   │   ├── UVNNhan_BI.TTF
+│   │   │   │   │   ├── UVNNhan_I.TTF
+│   │   │   │   │   ├── UVNNhan_R.TTF
+│   │   │   │   │   ├── UVNNhatKy_B.TTF
+│   │   │   │   │   ├── UVNNhatKy_BI.TTF
+│   │   │   │   │   ├── UVNNhatKy_I.TTF
+│   │   │   │   │   ├── UVNNhatKy_R.TTF
+│   │   │   │   │   ├── UVNPhuongTay.TTF
+│   │   │   │   │   ├── UVNSachVo_B.TTF
+│   │   │   │   │   ├── UVNSachVo_BI.TTF
+│   │   │   │   │   ├── UVNSachVo_I.TTF
+│   │   │   │   │   ├── UVNSachVo_R.TTF
+│   │   │   │   │   ├── UVNSaigon_B.TTF
+│   │   │   │   │   ├── UVNSaigon_BI.TTF
+│   │   │   │   │   ├── UVNSaigon_I.TTF
+│   │   │   │   │   ├── UVNSaigon_R.TTF
+│   │   │   │   │   ├── UVNSangSong_B.TTF
+│   │   │   │   │   ├── UVNSangSong_N.TTF
+│   │   │   │   │   ├── UVNSangSong_R.TTF
+│   │   │   │   │   ├── UVNThangGieng_I.TTF
+│   │   │   │   │   ├── UVNThangGieng_R.TTF
+│   │   │   │   │   ├── UVNThangVu.TTF
+│   │   │   │   │   ├── UVNThanhBinh.TTF
+│   │   │   │   │   ├── UVNThanhPhoNang.TTF
+│   │   │   │   │   ├── UVNThanhPho_B.TTF
+│   │   │   │   │   ├── UVNThanhPho_R.TTF
+│   │   │   │   │   ├── UVNThayGiaoNang_I.TTF
+│   │   │   │   │   ├── UVNThayGiaoNang_R.TTF
+│   │   │   │   │   ├── UVNThayGiaoNhe_I.TTF
+│   │   │   │   │   ├── UVNThayGiaoNhe_R.TTF
+│   │   │   │   │   ├── UVNThayGiao_B.TTF
+│   │   │   │   │   ├── UVNThayGiao_BI.TTF
+│   │   │   │   │   ├── UVNThayGiao_I.TTF
+│   │   │   │   │   ├── UVNThayGiao_R.TTF
+│   │   │   │   │   ├── UVNThoiDai1.TTF
+│   │   │   │   │   ├── UVNThoiDai2.TTF
+│   │   │   │   │   ├── UVNThoiNayNang_I.TTF
+│   │   │   │   │   ├── UVNThoiNayNang_R.TTF
+│   │   │   │   │   ├── UVNThoiNay_B.TTF
+│   │   │   │   │   ├── UVNThoiNay_BI.TTF
+│   │   │   │   │   ├── UVNThoiNay_I.TTF
+│   │   │   │   │   ├── UVNThoiNay_R.TTF
+│   │   │   │   │   ├── UVNThuTu.TTF
+│   │   │   │   │   ├── UVNTinTucHepThem_B.TTF
+│   │   │   │   │   ├── UVNTinTucHepThem_R.TTF
+│   │   │   │   │   ├── UVNTinTucHep_B.TTF
+│   │   │   │   │   ├── UVNTinTucHep_BI.TTF
+│   │   │   │   │   ├── UVNTinTucHep_I.TTF
+│   │   │   │   │   ├── UVNTinTucHep_R.TTF
+│   │   │   │   │   ├── UVNTinTucNhe_I.TTF
+│   │   │   │   │   ├── UVNTinTucNhe_R.TTF
+│   │   │   │   │   ├── UVNTinTuc_B.TTF
+│   │   │   │   │   ├── UVNTinTuc_BI.TTF
+│   │   │   │   │   ├── UVNTinTuc_I.TTF
+│   │   │   │   │   ├── UVNTinTuc_R.TTF
+│   │   │   │   │   ├── UVNVanChuongNang_R.TTF
+│   │   │   │   │   ├── UVNVanChuong_B.TTF
+│   │   │   │   │   ├── UVNVanChuong_I.TTF
+│   │   │   │   │   ├── UVNVanChuong_R.TTF
+│   │   │   │   │   ├── UVNVan_B.TTF
+│   │   │   │   │   ├── UVNVan_R.TTF
+│   │   │   │   │   ├── UVNViVi.TTF
+│   │   │   │   │   ├── UVNVienDu.TTF
+│   │   │   │   │   ├── UVNVietSach_B.TTF
+│   │   │   │   │   ├── UVNVietSach_BI.TTF
+│   │   │   │   │   ├── UVNVietSach_I.TTF
+│   │   │   │   │   ├── UVNVietSach_R.TTF
+│   │   │   │   │   ├── UVNVungTau.TTF
+│   │   │   │   │   ├── aachenb.ttf
+│   │   │   │   │   ├── agoldfac.ttf
+│   │   │   │   │   ├── akronism.ttf
+│   │   │   │   │   ├── algerian.ttf
+│   │   │   │   │   ├── amazone.ttf
+│   │   │   │   │   ├── americau.ttf
+│   │   │   │   │   ├── amherst.ttf
+│   │   │   │   │   ├── antique.ttf
+│   │   │   │   │   ├── arabia.ttf
+│   │   │   │   │   ├── architep.ttf
+│   │   │   │   │   ├── arial round.ttf
+│   │   │   │   │   ├── arial.ttf
+│   │   │   │   │   ├── arialbd.ttf
+│   │   │   │   │   ├── arialbi.ttf
+│   │   │   │   │   ├── ariali.ttf
+│   │   │   │   │   ├── arialr.ttf
+│   │   │   │   │   ├── aristoni.ttf
+│   │   │   │   │   ├── arrusb.ttf
+│   │   │   │   │   ├── arrusn.ttf
+│   │   │   │   │   ├── avantg.ttf
+│   │   │   │   │   ├── avantgd.ttf
+│   │   │   │   │   ├── aztekb.ttf
+│   │   │   │   │   ├── banditbi.ttf
+│   │   │   │   │   ├── bankgotm.ttf
+│   │   │   │   │   ├── barmeneb.ttf
+│   │   │   │   │   ├── bauhauhb.ttf
+│   │   │   │   │   ├── bauhausl.ttf
+│   │   │   │   │   ├── bauhausm.ttf
+│   │   │   │   │   ├── bedrock.ttf
+│   │   │   │   │   ├── bellevui.ttf
+│   │   │   │   │   ├── benguiat.ttf
+│   │   │   │   │   ├── berthosi.ttf
+│   │   │   │   │   ├── bigapple.ttf
+│   │   │   │   │   ├── bodoni.ttf
+│   │   │   │   │   ├── bodonieb.ttf
+│   │   │   │   │   ├── bodonpcb.ttf
+│   │   │   │   │   ├── bookman.ttf
+│   │   │   │   │   ├── boton.ttf
+│   │   │   │   │   ├── braggado.ttf
+│   │   │   │   │   ├── broadb.ttf
+│   │   │   │   │   ├── brushsbi.ttf
+│   │   │   │   │   ├── casablan.ttf
+│   │   │   │   │   ├── centurio.ttf
+│   │   │   │   │   ├── chelthm.ttf
+│   │   │   │   │   ├── circle.ttf
+│   │   │   │   │   ├── circle3d.ttf
+│   │   │   │   │   ├── clearfag.ttf
+│   │   │   │   │   ├── colonna.ttf
+│   │   │   │   │   ├── comic.ttf
+│   │   │   │   │   ├── comicbd.ttf
+│   │   │   │   │   ├── commercb.ttf
+│   │   │   │   │   ├── commerce.ttf
+│   │   │   │   │   ├── commercs.ttf
+│   │   │   │   │   ├── compacta.ttf
+│   │   │   │   │   ├── corporat.ttf
+│   │   │   │   │   ├── corsiva.ttf
+│   │   │   │   │   ├── countdow.ttf
+│   │   │   │   │   ├── cour.ttf
+│   │   │   │   │   ├── courbd.ttf
+│   │   │   │   │   ├── courbi.ttf
+│   │   │   │   │   ├── couri.ttf
+│   │   │   │   │   ├── crystal.ttf
+│   │   │   │   │   ├── dauphin.ttf
+│   │   │   │   │   ├── desdemon.ttf
+│   │   │   │   │   ├── domcasua.ttf
+│   │   │   │   │   ├── dur.ttf
+│   │   │   │   │   ├── elephant.ttf
+│   │   │   │   │   ├── erascont.ttf
+│   │   │   │   │   ├── erieblac.ttf
+│   │   │   │   │   ├── exoticb.ttf
+│   │   │   │   │   ├── fettefrb.ttf
+│   │   │   │   │   ├── fillmore.ttf
+│   │   │   │   │   ├── floral.ttf
+│   │   │   │   │   ├── flowdeco.ttf
+│   │   │   │   │   ├── frankfub.ttf
+│   │   │   │   │   ├── freehani.ttf
+│   │   │   │   │   ├── freestyl.ttf
+│   │   │   │   │   ├── frutiger.ttf
+│   │   │   │   │   ├── fujiyalc.ttf
+│   │   │   │   │   ├── fujiyama.ttf
+│   │   │   │   │   ├── futurab.ttf
+│   │   │   │   │   ├── futurabb.ttf
+│   │   │   │   │   ├── galleria.ttf
+│   │   │   │   │   ├── garamond.ttf
+│   │   │   │   │   ├── gatineau.ttf
+│   │   │   │   │   ├── geoslabc.ttf
+│   │   │   │   │   ├── geoslabe.ttf
+│   │   │   │   │   ├── geoslabl.ttf
+│   │   │   │   │   ├── gillsanc.ttf
+│   │   │   │   │   ├── gillsans.ttf
+│   │   │   │   │   ├── goudyold.ttf
+│   │   │   │   │   ├── goudytex.ttf
+│   │   │   │   │   ├── harpoon.ttf
+│   │   │   │   │   ├── harringt.ttf
+│   │   │   │   │   ├── helvetin.ttf
+│   │   │   │   │   ├── imagoeb.ttf
+│   │   │   │   │   ├── impact.ttf
+│   │   │   │   │   ├── isadora.ttf
+│   │   │   │   │   ├── jamai.ttf
+│   │   │   │   │   ├── jupiter.ttf
+│   │   │   │   │   ├── kaufmann.ttf
+│   │   │   │   │   ├── kids.ttf
+│   │   │   │   │   ├── korinna.ttf
+│   │   │   │   │   ├── kunmedii.ttf
+│   │   │   │   │   ├── linoscri.ttf
+│   │   │   │   │   ├── linotext.ttf
+│   │   │   │   │   ├── lithogrb.ttf
+│   │   │   │   │   ├── lucidahw.ttf
+│   │   │   │   │   ├── memorand.ttf
+│   │   │   │   │   ├── merscrb.ttf
+│   │   │   │   │   ├── microsslv.ttf
+│   │   │   │   │   ├── murray.ttf
+│   │   │   │   │   ├── mystical.ttf
+│   │   │   │   │   ├── nebraski.ttf
+│   │   │   │   │   ├── newcentn.ttf
+│   │   │   │   │   ├── newsgoth.ttf
+│   │   │   │   │   ├── nueva.ttf
+│   │   │   │   │   ├── nuevabe(2).ttf
+│   │   │   │   │   ├── nuevabe.ttf
+│   │   │   │   │   ├── nuptiasi.ttf
+│   │   │   │   │   ├── officins.ttf
+│   │   │   │   │   ├── officisa.ttf
+│   │   │   │   │   ├── onyx.ttf
+│   │   │   │   │   ├── optima.ttf
+│   │   │   │   │   ├── pala.ttf
+│   │   │   │   │   ├── palab.ttf
+│   │   │   │   │   ├── palabi.ttf
+│   │   │   │   │   ├── palai.ttf
+│   │   │   │   │   ├── parkaven.ttf
+│   │   │   │   │   ├── pepita.ttf
+│   │   │   │   │   ├── perpetua.ttf
+│   │   │   │   │   ├── postantb.ttf
+│   │   │   │   │   ├── presiden.ttf
+│   │   │   │   │   ├── revueb.ttf
+│   │   │   │   │   ├── rockston.ttf
+│   │   │   │   │   ├── rockwebb.ttf
+│   │   │   │   │   ├── russells.ttf
+│   │   │   │   │   ├── sansseri.ttf
+│   │   │   │   │   ├── scripti.ttf
+│   │   │   │   │   ├── segoeuil.ttf
+│   │   │   │   │   ├── serpensl.ttf
+│   │   │   │   │   ├── serpentb.ttf
+│   │   │   │   │   ├── serpents.ttf
+│   │   │   │   │   ├── shelleai.ttf
+│   │   │   │   │   ├── signatli.ttf
+│   │   │   │   │   ├── slogan.ttf
+│   │   │   │   │   ├── snell.ttf
+│   │   │   │   │   ├── souvenir.ttf
+│   │   │   │   │   ├── standout.ttf
+│   │   │   │   │   ├── starstrp.ttf
+│   │   │   │   │   ├── stencilb.ttf
+│   │   │   │   │   ├── stop.ttf
+│   │   │   │   │   ├── switzerl.ttf
+│   │   │   │   │   ├── tahoma.ttf
+│   │   │   │   │   ├── tahomabd.ttf
+│   │   │   │   │   ├── tekton.ttf
+│   │   │   │   │   ├── tiffany.ttf
+│   │   │   │   │   ├── times.ttf
+│   │   │   │   │   ├── timesbd.ttf
+│   │   │   │   │   ├── timesbi.ttf
+│   │   │   │   │   ├── timesi.ttf
+│   │   │   │   │   ├── timesnar.ttf
+│   │   │   │   │   ├── trebuc.ttf
+│   │   │   │   │   ├── trebucbd.ttf
+│   │   │   │   │   ├── trebucbi.ttf
+│   │   │   │   │   ├── trebucit.ttf
+│   │   │   │   │   ├── tubes.ttf
+│   │   │   │   │   ├── umbra.ttf
+│   │   │   │   │   ├── universi.ttf
+│   │   │   │   │   ├── verdana.ttf
+│   │   │   │   │   ├── verdanab.ttf
+│   │   │   │   │   ├── verdanai.ttf
+│   │   │   │   │   ├── verdanaz.ttf
+│   │   │   │   │   ├── victoria.ttf
+│   │   │   │   │   ├── vivabee.ttf
+│   │   │   │   │   ├── vivienne.ttf
+│   │   │   │   │   ├── vogueeb.ttf
+│   │   │   │   │   ├── walbaum.ttf
+│   │   │   │   │   ├── windsorb.ttf
+│   │   │   │   │   ├── woodtypd.ttf
+│   │   │   │   │   └── zapfchmi.ttf
+│   │   │   │   ├── icons
+│   │   │   │   │   ├── 1766502511645.png
+│   │   │   │   │   ├── 1766502865262.png
+│   │   │   │   │   ├── 1766503820775.png
+│   │   │   │   │   └── 1766505207870.png
+│   │   │   │   ├── background.png
+│   │   │   │   └── settings.json
+│   │   │   ├── app-update.yml
+│   │   │   ├── app.asar
+│   │   │   └── elevate.exe
+│   │   ├── Favo.exe
+│   │   ├── LICENSE.electron.txt
+│   │   ├── LICENSES.chromium.html
+│   │   ├── chrome_100_percent.pak
+│   │   ├── chrome_200_percent.pak
+│   │   ├── d3dcompiler_47.dll
+│   │   ├── ffmpeg.dll
+│   │   ├── icudtl.dat
+│   │   ├── libEGL.dll
+│   │   ├── libGLESv2.dll
+│   │   ├── resources.pak
+│   │   ├── snapshot_blob.bin
+│   │   ├── v8_context_snapshot.bin
+│   │   ├── vk_swiftshader.dll
+│   │   ├── vk_swiftshader_icd.json
+│   │   └── vulkan-1.dll
+│   ├── Favo Setup 1.0.0.exe
+│   ├── Favo Setup 1.0.0.exe.blockmap
+│   ├── builder-debug.yml
+│   ├── builder-effective-config.yaml
+│   └── latest.yml
+├── src
+│   ├── assets
+│   │   └── react.svg
+│   ├── App.css
+│   ├── App.jsx
+│   ├── BookmarkManager.jsx
+│   ├── index.css
+│   ├── main.cjs
+│   └── main.jsx
+├── Launcher.exe
+├── Push_Git.bat
+├── README.md
+├── eslint.config.js
+├── icon.ico
+├── index.html
+├── npx
+├── package-lock.json
+├── package.json
+├── postcss.config.js
+├── structure.txt
+├── tailwind.config.js
+└── vite.config.js
