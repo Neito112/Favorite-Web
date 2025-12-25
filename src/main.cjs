@@ -23,7 +23,6 @@ const APP_INSTALL_DIR = app.isPackaged
 
 // Nơi lưu dữ liệu mới (AppData - Không bị mất khi update)
 const USER_DATA_DIR = path.join(app.getPath('userData'), 'UserData');
-
 const BOOKMARKS_DIR = path.join(USER_DATA_DIR, 'bookmarks');
 const ICONS_DIR = path.join(USER_DATA_DIR, 'icons');
 const FONTS_DIR = path.join(USER_DATA_DIR, 'fonts');
@@ -31,27 +30,22 @@ const SETTINGS_FILE = path.join(USER_DATA_DIR, 'settings.json');
 const BG_FILE = path.join(USER_DATA_DIR, 'background.png');
 const APP_ICON_PATH = path.join(__dirname, '../icon.ico');
 
-// --- [FIX] HÀM KHÔI PHỤC DỮ LIỆU CŨ ---
+// --- HÀM KHÔI PHỤC DỮ LIỆU CŨ ---
 function initializeUserData() {
     try {
-        // Tạo các thư mục nếu chưa có
         if (!fs.existsSync(USER_DATA_DIR)) fs.mkdirSync(USER_DATA_DIR, { recursive: true });
         if (!fs.existsSync(BOOKMARKS_DIR)) fs.mkdirSync(BOOKMARKS_DIR, { recursive: true });
         if (!fs.existsSync(ICONS_DIR)) fs.mkdirSync(ICONS_DIR, { recursive: true });
         if (!fs.existsSync(FONTS_DIR)) fs.mkdirSync(FONTS_DIR, { recursive: true });
 
-        // 1. [QUAN TRỌNG] Copy Bookmarks từ bản cũ sang
         console.log('[MIGRATION] Dang dong bo Bookmarks...');
         copyFolderRecursiveSync(path.join(APP_INSTALL_DIR, 'bookmarks'), BOOKMARKS_DIR);
 
-        // 2. [QUAN TRỌNG] Copy Icons từ bản cũ sang
         console.log('[MIGRATION] Dang dong bo Icons...');
         copyFolderRecursiveSync(path.join(APP_INSTALL_DIR, 'icons'), ICONS_DIR);
 
-        // 3. Copy Fonts
         copyFolderRecursiveSync(path.join(APP_INSTALL_DIR, 'fonts'), FONTS_DIR);
         
-        // 4. Copy Settings & Background
         const defaultBg = path.join(APP_INSTALL_DIR, 'background.png');
         if (fs.existsSync(defaultBg) && !fs.existsSync(BG_FILE)) {
             fs.copyFileSync(defaultBg, BG_FILE);
@@ -64,11 +58,9 @@ function initializeUserData() {
     } catch (err) { console.error('[ERROR] Loi khoi tao data:', err); }
 }
 
-// Hàm copy đệ quy (Chỉ copy file chưa tồn tại để tránh đè mất dữ liệu mới)
 function copyFolderRecursiveSync(source, target) {
     if (!fs.existsSync(source)) return;
     if (!fs.existsSync(target)) fs.mkdirSync(target, { recursive: true });
-    
     const files = fs.readdirSync(source);
     files.forEach((file) => {
         const curSource = path.join(source, file);
@@ -76,7 +68,6 @@ function copyFolderRecursiveSync(source, target) {
         if (fs.lstatSync(curSource).isDirectory()) {
             copyFolderRecursiveSync(curSource, curTarget);
         } else {
-            // Chỉ copy nếu bên đích CHƯA CÓ file này
             if (!fs.existsSync(curTarget)) {
                 fs.copyFileSync(curSource, curTarget);
             }
@@ -107,10 +98,11 @@ app.commandLine.appendSwitch('lang', 'vi');
 let mainWindow;
 
 function createWindow() {
-  initializeUserData(); // Chạy lệnh khôi phục dữ liệu
-
+  initializeUserData();
   mainWindow = new BrowserWindow({
-    width: 1280, height: 800, 
+    width: 1280, height: 800,
+    minWidth: 360,  // [UPDATE] Giới hạn chiều rộng tối thiểu (cỡ điện thoại)
+    minHeight: 500, // [UPDATE] Giới hạn chiều cao tối thiểu
     frame: false,
     autoHideMenuBar: true,
     icon: fs.existsSync(APP_ICON_PATH) ? APP_ICON_PATH : null, 
@@ -167,7 +159,6 @@ if (autoUpdater) {
 // --- IPC HANDLERS ---
 ipcMain.handle('load-bookmarks', async () => {
   try {
-    // [FIX] Kiểm tra cả 2 nơi để chắc chắn
     if (!fs.existsSync(BOOKMARKS_DIR)) return [];
     
     const files = fs.readdirSync(BOOKMARKS_DIR);
@@ -262,7 +253,6 @@ ipcMain.handle('save-settings', async (event, settings) => {
 
 ipcMain.handle('load-settings', async () => {
   try {
-    // Ưu tiên load từ UserData
     if (fs.existsSync(SETTINGS_FILE)) {
       const settings = JSON.parse(fs.readFileSync(SETTINGS_FILE, 'utf-8'));
       if (fs.existsSync(BG_FILE)) {
@@ -290,8 +280,19 @@ ipcMain.on('open-fonts-folder', () => {
     shell.openPath(FONTS_DIR);
 });
 
+// --- WINDOW CONTROLS ---
 ipcMain.on('app-minimize', () => BrowserWindow.getFocusedWindow()?.minimize());
 ipcMain.on('app-maximize', () => { const w = BrowserWindow.getFocusedWindow(); w?.isMaximized() ? w.unmaximize() : w.maximize(); });
 ipcMain.on('app-quit', () => app.quit());
+
+// --- MINI-MODE HANDLER ---
+ipcMain.handle('set-always-on-top', (event, flag) => {
+    const win = BrowserWindow.getFocusedWindow();
+    if (win) {
+        win.setAlwaysOnTop(flag, 'screen-saver'); 
+    }
+    return true;
+});
+
 app.on('window-all-closed', () => { if (process.platform !== 'darwin') app.quit(); });
 app.on('activate', () => { if (BrowserWindow.getAllWindows().length === 0) createWindow(); });
