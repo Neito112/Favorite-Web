@@ -1,6 +1,6 @@
 {
   "name": "favo-app",
-  "version": "0.9.16",
+  "version": "0.9.17",
   "description": "Bookmark Manager Favo",
   "main": "src/main.cjs",
   "author": "Neito",
@@ -58,8 +58,8 @@
     "nsis": {
       "oneClick": false,
       "allowToChangeInstallationDirectory": true,
-      "perMachine": true,            
-      "allowElevation": true,       
+      "perMachine": true,
+      "allowElevation": true,
       "createDesktopShortcut": true,
       "createStartMenuShortcut": true,
       "shortcutName": "Favo",
