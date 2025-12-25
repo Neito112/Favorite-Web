@@ -101,8 +101,8 @@ function createWindow() {
   initializeUserData();
   mainWindow = new BrowserWindow({
     width: 1280, height: 800,
-    minWidth: 360,  // [UPDATE] Giới hạn chiều rộng tối thiểu (cỡ điện thoại)
-    minHeight: 500, // [UPDATE] Giới hạn chiều cao tối thiểu
+    minWidth: 435,  // [UPDATE] Giới hạn chiều rộng tối thiểu (cỡ điện thoại)
+    minHeight: 295, // [UPDATE] Giới hạn chiều cao tối thiểu
     frame: false,
     autoHideMenuBar: true,
     icon: fs.existsSync(APP_ICON_PATH) ? APP_ICON_PATH : null, 
@@ -294,5 +294,11 @@ ipcMain.handle('set-always-on-top', (event, flag) => {
     return true;
 });
 
-app.on('window-all-closed', () => { if (process.platform !== 'darwin') app.quit(); });
-app.on('activate', () => { if (BrowserWindow.getAllWindows().length === 0) createWindow(); });
+// [THÊM ĐOẠN NÀY] - Xử lý thay đổi kích thước cửa sổ
+ipcMain.handle('resize-window', (event, { width, height }) => {
+    const win = BrowserWindow.getFocusedWindow();
+    if (win) {
+        win.setSize(width, height, true); // true để có hiệu ứng mượt (nếu OS hỗ trợ)
+    }
+    return true;
+});

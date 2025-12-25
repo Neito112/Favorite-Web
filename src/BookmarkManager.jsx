@@ -369,7 +369,19 @@ export default function BookmarkApp() {
   const toggleMiniMode = async () => {
       const newState = !isMiniMode;
       setIsMiniMode(newState);
+      
+      // 1. Set luôn nổi lên trên
       await ipcRenderer.invoke('set-always-on-top', newState);
+      
+      // [THÊM ĐOẠN NÀY] - 2. Gửi lệnh thay đổi kích thước
+      if (newState) {
+          // Kích thước khi vào Mini Mode (Ví dụ: rộng 360px, cao 600px)
+          await ipcRenderer.invoke('resize-window', { width: 435, height: 295 });
+      } else {
+          // Kích thước khi về chế độ thường (Ví dụ: rộng 1280px, cao 800px)
+          // Bạn có thể lưu lại kích thước trước đó vào state nếu muốn mượt hơn
+          await ipcRenderer.invoke('resize-window', { width: 1280, height: 800 });
+      }
   };
 
   const handleAction = useCallback((actionType, target = 'main', value = null) => {
