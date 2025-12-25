@@ -611,7 +611,22 @@ export default function BookmarkApp() {
                                     
                                     <div><label className={`text-xs font-bold uppercase tracking-wider mb-2 block opacity-70`}>{t('background')}</label>{settings.bgImage ? (<div className="relative group rounded-xl overflow-hidden h-24 border border-gray-500/20"><img src={settings.bgImage} className="w-full h-full object-cover opacity-70 group-hover:opacity-100 transition-opacity" /><button onClick={() => updateSetting('bgImage', null)} className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity text-white text-xs font-bold"><Trash2 size={16} className="mr-1"/> {t('removeBg')}</button></div>) : (<div onClick={() => bgInputRef.current?.click()} className={`h-20 rounded-xl border-2 border-dashed flex flex-col items-center justify-center cursor-pointer hover:bg-black/5 ${isDark ? 'border-slate-700' : 'border-slate-300'}`} style={{ ':hover': { borderColor: currentAccent } }}><Upload size={20} className="opacity-50 mb-1" /><span className="text-xs font-bold opacity-60">{t('uploadBg')}</span></div>)}<input type="file" ref={bgInputRef} className="hidden" accept="image/*" onChange={handleBgUpload} />{settings.bgImage && (<div className="mt-3"><div className="flex justify-between text-xs mb-1 opacity-70"><span>{t('bgOpacity')}</span><span>{settings.bgOpacity}%</span></div><input type="range" min="0" max="100" value={settings.bgOpacity} onChange={(e) => updateSetting('bgOpacity', Number(e.target.value))} className="w-full h-1 bg-gray-500/20 rounded-lg appearance-none cursor-pointer" style={{ accentColor: currentAccent }} /></div>)}</div>
                                     
-                                    <div><div className="flex justify-between mb-2"><label className={`text-xs font-bold uppercase tracking-wider opacity-70`}>{t('gridCols')}</label><span className="text-xs font-bold bg-black/10 px-1.5 py-0.5 rounded">{settings.gridCols || 6}</span></div><input type="range" min="4" max="12" step="1" value={settings.gridCols || 6} onChange={(e) => updateSetting('gridCols', Number(e.target.value))} className="w-full h-1 bg-gray-500/20 rounded-lg appearance-none cursor-pointer" style={{ accentColor: currentAccent }} /></div>
+                                    <div>
+                                        <div className="flex justify-between mb-2">
+                                            <label className={`text-xs font-bold uppercase tracking-wider opacity-70`}>{t('gridCols')}</label>
+                                            <span className="text-xs font-bold bg-black/10 px-1.5 py-0.5 rounded">{settings.gridCols || 6}</span>
+                                        </div>
+                                        <input 
+                                            type="range" 
+                                            min="4" 
+                                            max="18" 
+                                            step="1" 
+                                            value={settings.gridCols || 6} 
+                                            onChange={(e) => updateSetting('gridCols', Number(e.target.value))} 
+                                            className="w-full h-1 bg-gray-500/20 rounded-lg appearance-none cursor-pointer" 
+                                            style={{ accentColor: currentAccent }} 
+                                        />
+                                    </div>
                                     
                                     <div>
                                         <label className={`text-xs font-bold uppercase tracking-wider mb-2 block opacity-70`}>{t('language')}</label>
@@ -679,12 +694,13 @@ export default function BookmarkApp() {
                             getFavicon={getFavicon} 
                             isDark={isDark} 
                             isTrash={activeTab === 'trash'} 
-                            setViewingUrl={openSession} // [UPDATED] Dùng openSession thay vì setViewingUrl trực tiếp
+                            setViewingUrl={openSession} 
                             setItemToDelete={setItemToDelete} 
                             updateStatus={updateBookmarkStatus}
                             hasBg={hasBg} 
                             isEditMode={isEditMode} 
-                            onEdit={openModal}      
+                            onEdit={openModal}  
+                            gridSize={settings.gridCols || 6} 
                         />
                       ))}
                   </div>
@@ -827,25 +843,41 @@ function ShortcutRow({ keys, keys2, desc, icon, isDark }) {
   );
 }
 
-function BookmarkCard({ data, getFavicon, isDark, isTrash, setViewingUrl, setItemToDelete, updateStatus, hasBg, isEditMode, onEdit }) {
+function BookmarkCard({ data, getFavicon, isDark, isTrash, setViewingUrl, setItemToDelete, updateStatus, hasBg, isEditMode, onEdit, gridSize }) {
   const displayIcon = getFavicon(data.url, data.localIconPath) || data.iconUrl;
 
   const titleClass = hasBg 
     ? "text-white font-bold drop-shadow-[0_2px_4px_rgba(0,0,0,0.9)]" 
     : "font-bold opacity-80 group-hover:opacity-100 group-hover:text-blue-500 transition-colors";
 
+  // --- [CHANGE 1] Cập nhật công thức: Max to hơn, Min giữ nguyên 8.5 ---
+  // 22 - (4 * 0.75) = 19px (Rất to)
+  // 22 - (18 * 0.75) = 8.5px (Min)
+  const dynamicFontSize = Math.max(8.5, 22 - (gridSize * 0.75)); 
+
   return (
     <div 
-        className="group cursor-pointer relative flex flex-col items-center w-full" 
+        className="group cursor-pointer relative flex flex-col items-center w-full hover:z-[100]" 
         onClick={(e) => {
              if (isEditMode && !data.deleted) {
                  e.preventDefault();
                  onEdit(data);
              } else if (!data.deleted) {
-                 setViewingUrl(data.id); // [UPDATED] Truyền ID thay vì URL để quản lý session
+                 setViewingUrl(data.id);
              }
         }}
     >
+        {/* --- [CHANGE 2] Tooltip có độ trễ 1.5s (1500ms) --- */}
+        {/* Sử dụng opacity + delay thay vì display:none để có hiệu ứng trễ mượt mà */}
+        <div className="absolute z-50 left-1/2 -translate-x-1/2 top-[90%] w-max max-w-[200px] pointer-events-none 
+                        opacity-0 invisible group-hover:opacity-100 group-hover:visible 
+                        transition-all duration-200 group-hover:delay-[1500ms]">
+            <div className="bg-white text-black text-xs px-2 py-1 border border-gray-300 shadow-[2px_2px_5px_rgba(0,0,0,0.2)] whitespace-normal break-words text-left cursor-default">
+                <div>{data.title}</div>
+                <div className="text-[10px] text-gray-500 mt-0.5 opacity-80 truncate max-w-[180px]">{data.url}</div>
+            </div>
+        </div>
+
         <div className={`w-full aspect-square rounded-2xl border flex items-center justify-center overflow-hidden shadow-sm hover:shadow-md hover:scale-105 transition-all relative z-10 ${isDark ? 'border-white/10 bg-white/5' : 'border-black/5 bg-white/60'} ${isEditMode && !data.deleted ? 'ring-2 ring-yellow-400 animate-pulse' : ''}`}>
           <img 
             src={displayIcon} 
@@ -861,7 +893,21 @@ function BookmarkCard({ data, getFavicon, isDark, isTrash, setViewingUrl, setIte
           )}
         </div>
         
-        <p className={`mt-2 text-center text-xs truncate w-full px-1 ${titleClass}`}>
+        <p 
+            style={{ 
+                fontSize: `${dynamicFontSize}px`, 
+                lineHeight: '1.25',
+                display: '-webkit-box',
+                WebkitLineClamp: 2,
+                WebkitBoxOrient: 'vertical',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                wordBreak: 'break-word', 
+                width: '100%',
+                padding: '0 2px'
+            }}
+            className={`mt-2 text-center w-full px-1 ${titleClass}`}
+        >
             {data.title}
         </p>
 
