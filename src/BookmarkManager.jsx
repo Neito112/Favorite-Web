@@ -397,8 +397,11 @@ export default function BookmarkApp() {
     } catch (err) { console.error("Action Error:", err); }
   }, [activeSessionId, isMiniMode]);
 
+// Tìm và thay thế hàm này trong code của bạn
   const attachWebviewEvents = (wv, type = 'main') => {
       if (!wv) return;
+
+      // --- 1. LOGIC XỬ LÝ PHÍM TẮT (Giữ nguyên) ---
       const handleShortcutLogic = (key, isCtrl, isAlt) => {
         const k = key.toLowerCase();
         if (k === 'f5' || (isCtrl && k === 'r')) { handleAction('reload', type); return true; }
@@ -418,14 +421,54 @@ export default function BookmarkApp() {
         }
         return false;
       };
+
+      // --- 2. CÁC EVENT LISTENERS ---
       const onInput = (e) => { const input = e.input; if (input?.type !== 'keyDown') return; handleShortcutLogic(input.key, input.control || input.meta, input.alt); };
+      
       const onContextMenu = (e) => {
           const params = e.params || {}; const rect = wv.getBoundingClientRect(); setCurrentZoom(wv.getZoomLevel());
           setContextMenu({ visible: true, x: (params.x || 0) + rect.x, y: (params.y || 0) + rect.y, mediaType: params.mediaType, hasSelection: !!params.selectionText, targetWebview: type });
       };
+      
       const onNewWindow = (e) => { e.preventDefault(); if (type === 'main' && e.url) setPopupUrl(e.url); };
-      try { wv.removeEventListener('before-input-event', onInput); wv.removeEventListener('context-menu', onContextMenu); wv.removeEventListener('new-window', onNewWindow); } catch(e){}
-      wv.addEventListener('before-input-event', onInput); wv.addEventListener('context-menu', onContextMenu); wv.addEventListener('new-window', onNewWindow);
+
+      // --- [MỚI] 3. TIÊM CSS THANH CUỘN KHI TRANG LOAD XONG ---
+      const onDomReady = () => {
+          // Màu thanh cuộn trung tính (Xám trong suốt) để hợp với cả Web Sáng và Tối
+          const scrollbarCSS = `
+            ::-webkit-scrollbar { width: 10px; height: 10px; }
+            ::-webkit-scrollbar-track { background: transparent; }
+            ::-webkit-scrollbar-thumb { 
+                background: rgba(128, 128, 128, 0.5); 
+                border-radius: 99px; 
+                border: 2px solid transparent; 
+                background-clip: content-box; 
+            }
+            ::-webkit-scrollbar-thumb:hover { 
+                background: rgba(128, 128, 128, 0.8); 
+            }
+            ::-webkit-scrollbar-corner { background: transparent; }
+          `;
+          try {
+              wv.insertCSS(scrollbarCSS);
+          } catch (err) {
+              console.error("Lỗi tiêm CSS thanh cuộn:", err);
+          }
+      };
+
+      // Xóa listener cũ để tránh trùng lặp (cleanup)
+      try {     
+          wv.removeEventListener('before-input-event', onInput); 
+          wv.removeEventListener('context-menu', onContextMenu); 
+          wv.removeEventListener('new-window', onNewWindow); 
+          wv.removeEventListener('dom-ready', onDomReady); // [MỚI]
+      } catch(e){}
+
+      // Gán listener mới
+      wv.addEventListener('before-input-event', onInput); 
+      wv.addEventListener('context-menu', onContextMenu); 
+      wv.addEventListener('new-window', onNewWindow);
+      wv.addEventListener('dom-ready', onDomReady); // [MỚI] Kích hoạt tiêm CSS
   };
 
   const setPopupWebviewRef = useCallback((node) => { if (node) { popupWebviewRef.current = node; attachWebviewEvents(node, 'popup'); } }, [popupUrl]);
@@ -501,6 +544,20 @@ export default function BookmarkApp() {
     // [MOD] Min-width đảm bảo không vỡ khung, overflow-hidden để cắt phần dư
     <div className="flex flex-col h-screen overflow-hidden select-none transition-all duration-300 min-w-[360px] min-h-[500px]" style={theme.appStyle}>
       
+       <style>{`
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb {
+          background-color: ${isDark ? 'rgba(255, 255, 255, 0.15)' : 'rgba(0, 0, 0, 0.15)'};
+          border-radius: 99px;
+          border: 2px solid transparent;
+          background-clip: content-box;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+          background-color: ${isDark ? 'rgba(255, 255, 255, 0.3)' : 'rgba(0, 0, 0, 0.3)'};
+        }
+        ::-webkit-scrollbar-corner { background: transparent; }
+      `}</style>    
       {/* TITLE BAR (Header phía trên) - Chỉ hiện ở Normal Mode */}
       {!isMiniMode && (
         <div className={`h-10 flex items-center justify-between pl-2 pr-1 flex-shrink-0 border-b backdrop-blur-md z-[500] relative`} style={{ ...theme.glassPanel, WebkitAppRegion: 'drag' }}>
