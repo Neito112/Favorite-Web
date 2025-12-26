@@ -302,3 +302,112 @@ ipcMain.handle('resize-window', (event, { width, height }) => {
     }
     return true;
 });
+// --- [NEW] LOGIC XỬ LÝ DROP ZONE & SCRAPING ---
+const axios = require('axios');
+const cheerio = require('cheerio');
+const os = require('os');
+
+// Thư mục tạm để chứa file tải về
+const TEMP_DIR = path.join(app.getPath('temp'), 'Favo_DropZone');
+
+// Hàm dọn dẹp thư mục tạm
+const clearTempDir = () => {
+    try {
+        if (fs.existsSync(TEMP_DIR)) {
+            fs.rmSync(TEMP_DIR, { recursive: true, force: true });
+        }
+        fs.mkdirSync(TEMP_DIR, { recursive: true });
+    } catch (e) { console.error('Clear Temp Error:', e); }
+};
+
+// Hàm kiểm tra và tải file
+async function processMediaItem(url, index) {
+    try {
+        // 1. Kiểm tra dung lượng (HEAD request) - Không tải nội dung về
+        const headRes = await axios.head(url, { timeout: 5000 }).catch(() => null);
+        
+        let size = 0;
+        if (headRes && headRes.headers['content-length']) {
+            size = parseInt(headRes.headers['content-length'], 10);
+        }
+
+        const LIMIT_100MB = 100 * 1024 * 1024;
+        const extension = path.extname(url).split('?')[0] || '.jpg';
+        const fileName = `media_${index}${extension}`;
+        const filePath = path.join(TEMP_DIR, fileName);
+
+        // CASE A: File quá nặng (> 100MB) -> KHÔNG TẢI
+        if (size > LIMIT_100MB) {
+            return {
+                type: 'large_file',
+                url: url,
+                size: size,
+                isDownloaded: false,
+                name: fileName
+            };
+        }
+
+        // CASE B: File nhỏ -> TẢI VỀ FOLDER TẠM
+        const writer = fs.createWriteStream(filePath);
+        const response = await axios({
+            url,
+            method: 'GET',
+            responseType: 'stream',
+            timeout: 10000
+        });
+
+        response.data.pipe(writer);
+
+        return new Promise((resolve, reject) => {
+            writer.on('finish', () => resolve({
+                type: 'downloaded',
+                localPath: filePath.replace(/\\/g, '/'), // Chuẩn hóa đường dẫn cho Frontend
+                url: url,
+                size: size,
+                isDownloaded: true
+            }));
+            writer.on('error', () => resolve(null)); // Lỗi thì bỏ qua
+        });
+
+    } catch (e) {
+        return null; // Link chết hoặc lỗi mạng
+    }
+}
+
+ipcMain.handle('process-drop-link', async (event, targetUrl) => {
+    try {
+        // 1. Dọn dẹp rác cũ
+        clearTempDir();
+
+        // 2. Lấy HTML của trang web
+        const { data: html } = await axios.get(targetUrl, { 
+            headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36' } 
+        });
+        
+        const $ = cheerio.load(html);
+        const mediaList = [];
+
+        // 3. Quét thẻ IMG và VIDEO
+        $('img').each((i, el) => {
+            const src = $(el).attr('src');
+            if (src && src.startsWith('http')) mediaList.push(src);
+        });
+        
+        $('video source').each((i, el) => {
+            const src = $(el).attr('src');
+            if (src && src.startsWith('http')) mediaList.push(src);
+        });
+
+        // Lấy tối đa 20 file đầu tiên để demo (tránh treo máy)
+        const uniqueLinks = [...new Set(mediaList)].slice(0, 20);
+        
+        // 4. Xử lý tải song song
+        const results = await Promise.all(uniqueLinks.map((url, index) => processMediaItem(url, index)));
+
+        // Lọc bỏ các kết quả lỗi
+        return { success: true, items: results.filter(i => i !== null) };
+
+    } catch (error) {
+        return { success: false, error: error.message };
+    }
+});

@@ -141,6 +141,10 @@ export default function BookmarkApp() {
   const [isEditMode, setIsEditMode] = useState(false);
   const [editingId, setEditingId] = useState(null);
 
+  const [isProcessingDrop, setIsProcessingDrop] = useState(false);
+  const [dropResults, setDropResults] = useState(null); // Danh sách file tải được
+  const [isDropZoneHovered, setIsDropZoneHovered] = useState(false);
+
   // [ĐA NHIỆM - TABS] 
   const [sessions, setSessions] = useState([]); 
   const [activeSessionId, setActiveSessionId] = useState(null);
@@ -202,6 +206,26 @@ export default function BookmarkApp() {
 
   useEffect(() => { loadData(); }, []);
 
+  // [NEW] XỬ LÝ KÉO THẢ LINK
+  const handleDropLink = async (e) => {
+      e.preventDefault();
+      setIsDropZoneHovered(false);
+      
+      const text = e.dataTransfer.getData('text');
+      if (!text || !text.startsWith('http')) return;
+
+      setIsProcessingDrop(true);
+      
+      // Gọi xuống Backend để xử lý (Tải ngầm & Lọc 100MB)
+      const result = await ipcRenderer.invoke('process-drop-link', text);
+      
+      setIsProcessingDrop(false);
+      if (result.success) {
+          setDropResults(result.items); // Hiển thị kết quả
+      } else {
+          alert('Lỗi phân tích: ' + result.error);
+      }
+  };
   // [SCALING] Lắng nghe sự kiện resize
   useEffect(() => {
       const handleResize = () => {
@@ -620,6 +644,33 @@ export default function BookmarkApp() {
                     </>
                 )}
             </div>
+{/* [NEW] DROP ZONE (Vùng thả link) */}
+            <div 
+                className={`relative flex items-center justify-center h-8 px-3 mx-2 rounded-lg border-2 border-dashed transition-all duration-300 ${
+                    isDropZoneHovered 
+                    ? 'border-blue-500 bg-blue-500/10 w-40' 
+                    : isProcessingDrop 
+                        ? 'border-yellow-500 bg-yellow-500/10 w-32' 
+                        : 'border-transparent hover:border-gray-500/30 w-10 hover:w-32 group'
+                }`}
+                onDragOver={(e) => { e.preventDefault(); setIsDropZoneHovered(true); }}
+                onDragLeave={() => setIsDropZoneHovered(false)}
+                onDrop={handleDropLink}
+                style={{ WebkitAppRegion: 'no-drag' }}
+            >
+                {/* Icon hiển thị */}
+                {isProcessingDrop ? (
+                    <RefreshCw size={16} className="animate-spin text-yellow-500"/>
+                ) : (
+                    <div className="flex items-center gap-2 overflow-hidden whitespace-nowrap">
+                        <Upload size={18} className={`${isDropZoneHovered ? 'text-blue-500' : 'opacity-50'}`}/>
+                        {/* Chữ chỉ hiện khi hover hoặc đang kéo file vào */}
+                        <span className={`text-xs font-bold transition-opacity duration-200 ${isDropZoneHovered || 'group-hover:opacity-100 opacity-0'}`}>
+                            {isDropZoneHovered ? 'Thả link vào đây' : 'Magic Drop'}
+                        </span>
+                    </div>
+                )}
+            </div>            
             {/* Window Controls */}
             <div className="flex items-center gap-1 pl-4" style={{ WebkitAppRegion: 'no-drag' }}>
                 {activeSessionId && (<><button onClick={toggleMiniMode} className="p-1.5 hover:bg-blue-500 hover:text-white rounded transition-colors opacity-60 hover:opacity-100" title={t('miniMode')}><PictureInPicture size={16} /></button><div className="w-px h-3 bg-gray-500/30 mx-2"></div></>)}
@@ -896,6 +947,74 @@ export default function BookmarkApp() {
       {isEmptyTrashOpen && (<div className="fixed inset-0 z-[9000] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm" onClick={() => setIsEmptyTrashOpen(false)}><div className={`w-full max-w-xs rounded-2xl p-6 text-center shadow-2xl ${isDark ? 'bg-slate-900 border border-slate-700' : 'bg-white'}`} onClick={e => e.stopPropagation()}><Trash2 size={40} className="mx-auto text-red-500 mb-4 bg-red-500/10 p-2 rounded-full"/><h3 className="font-bold text-lg mb-2">{t('emptyConfirmTitle')}</h3><p className="text-sm opacity-60 mb-6">{t('emptyConfirmDesc')}</p><div className="flex gap-3"><button onClick={() => setIsEmptyTrashOpen(false)} className="flex-1 py-2 rounded-lg font-bold border opacity-60 hover:opacity-100">{t('cancel')}</button><button onClick={executeEmptyTrash} className="flex-1 py-2 rounded-lg font-bold bg-red-500 text-white shadow-lg">{t('delete')}</button></div></div></div>)}
       {itemToDelete && (<div className="fixed inset-0 z-[9000] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm" onClick={() => setItemToDelete(null)}><div className={`w-full max-w-xs rounded-2xl p-6 text-center shadow-2xl ${isDark ? 'bg-slate-900 border border-slate-700' : 'bg-white'}`} onClick={e => e.stopPropagation()}><AlertTriangle size={40} className="mx-auto text-red-500 mb-4 bg-red-500/10 p-2 rounded-full"/><h3 className="font-bold text-lg mb-6">{activeTab === 'trash' ? t('deletePermanentTitle') : t('deleteConfirmTitle')}</h3><div className="flex gap-3"><button onClick={() => setItemToDelete(null)} className="flex-1 py-2 rounded-lg font-bold border opacity-60 hover:opacity-100">{t('cancel')}</button><button onClick={executeDelete} className="flex-1 py-2 rounded-lg font-bold bg-red-500 text-white shadow-lg">{t('delete')}</button></div></div></div>)}
       {isModalOpen && (<div className="fixed inset-0 z-[9000] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm" onClick={() => setIsModalOpen(false)}><div className={`w-full max-w-lg rounded-2xl p-0 shadow-2xl overflow-hidden ${isDark ? 'bg-slate-900' : 'bg-white'}`} onClick={e => e.stopPropagation()}><div className="p-4 border-b border-gray-500/10 flex justify-between items-center bg-black/5"><h3 className="font-bold">{editingId ? t('editTitle') : t('addTitle')}</h3><button onClick={() => setIsModalOpen(false)}><X size={18}/></button></div><form onSubmit={handleSaveBookmark} className="p-6 space-y-4"><div><label className="text-xs font-bold uppercase opacity-60 mb-1 block">{t('urlLabel')} <span className="text-red-500">*</span></label><div className="relative"><Globe size={16} className="absolute left-3 top-3 opacity-50"/><input autoFocus placeholder="example.com" className="w-full pl-9 pr-3 py-2.5 rounded-xl border bg-transparent outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all" value={formData.url} onChange={e => setFormData({...formData, url: e.target.value})} /></div></div><div><label className="text-xs font-bold uppercase opacity-60 mb-1 block">{t('titleLabel')}</label><input placeholder="My Website" className="w-full px-3 py-2.5 rounded-xl border bg-transparent outline-none focus:ring-2 focus:ring-blue-500 transition-all" value={formData.title} onChange={e => setFormData({...formData, title: e.target.value})} /></div><div><label className="text-xs font-bold uppercase opacity-60 mb-1 block">{t('iconLabel')}</label><div className="flex gap-2"><input type="text" placeholder="Image URL..." className="flex-1 px-3 py-2.5 rounded-xl border bg-transparent outline-none focus:ring-2 focus:ring-blue-500" value={formData.iconUrl} onChange={e => setFormData({...formData, iconUrl: e.target.value})} /><input type="file" ref={fileInputRef} className="hidden" accept="image/*" onChange={handleIconUpload} /><button type="button" onClick={() => fileInputRef.current?.click()} className="px-3 border rounded-xl hover:bg-black/5"><Upload size={18}/></button></div></div><div className="pt-4 flex justify-between gap-3">{editingId ? (<button type="button" onClick={handleDeleteFromModal} className="px-4 py-2 rounded-xl font-bold text-red-500 bg-red-500/10 hover:bg-red-500 hover:text-white transition-colors">{t('delete')}</button>) : (<div></div>)}<div className="flex gap-3"><button type="button" onClick={() => setIsModalOpen(false)} className="px-5 py-2 rounded-xl font-bold opacity-60 hover:opacity-100 hover:bg-black/5">{t('cancel')}</button><button type="submit" className="px-6 py-2 rounded-xl font-bold text-white shadow-lg transform active:scale-95 transition-all" style={{ backgroundColor: currentAccent }}>{editingId ? t('update') : t('save')}</button></div></div></form></div></div>)}
+    {/* [NEW] MODAL KẾT QUẢ DROP ZONE */}
+      {dropResults && (
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/80 backdrop-blur-md" onClick={() => setDropResults(null)}>
+            <div className="w-[80vw] h-[80vh] bg-[#1e1e1e] rounded-2xl border border-white/10 flex flex-col overflow-hidden shadow-2xl" onClick={e => e.stopPropagation()}>
+                {/* Header Modal */}
+                <div className="p-4 border-b border-white/10 flex justify-between items-center bg-black/20">
+                    <h3 className="font-bold text-white flex items-center gap-2">
+                        <Wand2 className="text-purple-500"/> Kết quả phân tích ({dropResults.length})
+                    </h3>
+                    <button onClick={() => setDropResults(null)} className="p-2 hover:bg-white/10 rounded-full"><X size={20} className="text-white"/></button>
+                </div>
+
+                {/* Grid Content */}
+                <div className="flex-1 overflow-y-auto p-4 custom-scrollbar">
+                    <div className="grid grid-cols-4 md:grid-cols-5 gap-4">
+                        {dropResults.map((item, idx) => (
+                            <div key={idx} className="relative group bg-black/40 rounded-xl overflow-hidden border border-white/5 hover:border-blue-500 transition-all">
+                                {/* TRƯỜNG HỢP 1: File nhỏ (<100MB) đã tải xong */}
+                                {item.isDownloaded ? (
+                                    <>
+                                        {/* Hiển thị ảnh/video từ file tạm */}
+                                        <div className="aspect-square flex items-center justify-center bg-checkerboard">
+                                            {item.name.endsWith('.mp4') ? (
+                                                <video src={`local-resource://${item.localPath}`} className="w-full h-full object-cover"/>
+                                            ) : (
+                                                <img src={`local-resource://${item.localPath}`} className="w-full h-full object-cover"/>
+                                            )}
+                                        </div>
+                                        {/* Nút Copy */}
+                                        <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 flex items-center justify-center gap-2 transition-opacity">
+                                            <button 
+                                                onClick={() => ipcRenderer.invoke('copy-image-to-clipboard', item.localPath)}
+                                                className="px-3 py-1.5 bg-blue-600 text-white text-xs font-bold rounded-lg hover:bg-blue-500"
+                                            >
+                                                <Copy size={14} className="inline mr-1"/> Copy
+                                            </button>
+                                        </div>
+                                        <div className="absolute bottom-1 right-1 bg-black/50 px-1 rounded text-[10px] text-white">
+                                            {(item.size / 1024).toFixed(1)} KB
+                                        </div>
+                                    </>
+                                ) : (
+                                    // TRƯỜNG HỢP 2: File quá lớn (>100MB) - Chỉ hiện Link
+                                    <div className="aspect-square flex flex-col items-center justify-center p-2 text-center bg-red-900/20">
+                                        <AlertTriangle size={24} className="text-red-500 mb-2"/>
+                                        <span className="text-xs font-bold text-red-400">FILE LỚN</span>
+                                        <span className="text-[10px] text-gray-400 mt-1">{(item.size / (1024*1024)).toFixed(1)} MB</span>
+                                        <button 
+                                            onClick={() => window.open(item.url, '_blank')} 
+                                            className="mt-2 px-2 py-1 bg-red-600/20 border border-red-500 text-red-500 text-[10px] rounded hover:bg-red-600 hover:text-white"
+                                        >
+                                            Mở Link Gốc
+                                        </button>
+                                    </div>
+                                )}
+                            </div>
+                        ))}
+                    </div>
+                </div>
+                
+                {/* Footer */}
+                <div className="p-3 border-t border-white/10 bg-black/20 text-right">
+                    <span className="text-xs text-gray-500 italic mr-4">Dữ liệu tạm sẽ bị xóa khi tắt ứng dụng</span>
+                    <button onClick={() => setDropResults(null)} className="px-6 py-2 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl">Đóng</button>
+                </div>
+            </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -994,6 +1113,7 @@ function BookmarkCard({
               </>
           )}
         </div>
+        
     </div>
   );
 }
