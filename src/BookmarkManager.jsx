@@ -8,7 +8,9 @@ import {
   MousePointer2, Mouse, Home, Image as ImageIcon, Type,
   Maximize, Minimize, ExternalLink, Type as FontIcon, FolderOpen,
   Check, ChevronDown, Minus, StopCircle, Pencil, Save, XCircle,
-  LogOut, Layers, PictureInPicture, Copy
+  LogOut, Layers, PictureInPicture, Copy,
+  Package, PackageOpen, Download, PackageCheck,
+  Film, Music, Image, Link, Maximize2
 } from 'lucide-react';
 
 // --- KẾT NỐI ELECTRON (Back-end) ---
@@ -57,7 +59,7 @@ const TRANSLATIONS = {
     editMode: 'Chỉnh sửa', editTitle: 'Cập nhật thông tin', update: 'Cập nhật',
     emptyTrash: 'Dọn rác', emptyConfirmTitle: 'Dọn sạch thùng rác?', emptyConfirmDesc: 'Tất cả bookmark trong thùng rác sẽ bị xóa vĩnh viễn.',
     closeSession: 'Đóng trang này',
-    miniMode: 'Chế độ Mini', exitMiniMode: 'Thoát Mini-mode', cloneTab: 'Nhân bản Tab'
+    miniMode: 'Chế độ Mini', exitMiniMode: 'Thoát Mini-mode', cloneTab: 'Thêm tab mới'
   },
   en: {
     dashboard: 'All Bookmarks', favorites: 'Favorites', trash: 'Trash',
@@ -118,7 +120,155 @@ const getFavicon = (url, localPath = null) => {
   try { return `https://www.google.com/s2/favicons?domain=${new URL(url).hostname}&sz=128`; } catch (e) { return null; }
 };
 
-export default function BookmarkApp() {
+// --- [NEW COMPONENT] GIAO DIỆN CỬA SỔ MAGIC TOOL ---
+function MagicToolWindow() {
+    const [items, setItems] = useState([]);
+    const [filter, setFilter] = useState('all'); // all, image, video, audio
+    const [inputLink, setInputLink] = useState('');
+    const [isProcessing, setIsProcessing] = useState(false);
+
+    useEffect(() => {
+        // Lắng nghe dữ liệu từ Main Process gửi sang
+        ipcRenderer.on('magic-data-update', (event, newItems) => {
+            // Merge dữ liệu mới vào đầu danh sách, lọc trùng URL
+            setItems(prev => {
+                const existingUrls = new Set(prev.map(i => i.url));
+                const uniqueNew = newItems.filter(i => !existingUrls.has(i.url));
+                return [...uniqueNew, ...prev];
+            });
+        });
+        return () => { ipcRenderer.removeAllListeners('magic-data-update'); };
+    }, []);
+
+    const handleProcess = async (url) => {
+        if (!url) return;
+        setIsProcessing(true);
+        const result = await ipcRenderer.invoke('process-drop-link', url);
+        setIsProcessing(false);
+        if (result.success) {
+            setItems(prev => {
+                const existingUrls = new Set(prev.map(i => i.url));
+                const uniqueNew = result.items.filter(i => !existingUrls.has(i.url));
+                return [...uniqueNew, ...prev];
+            });
+            setInputLink('');
+        } else {
+            alert("Lỗi: " + result.error);
+        }
+    };
+
+    // Phân loại file
+    const getFileType = (item) => {
+        const ext = item.name.split('.').pop().toLowerCase();
+        if (['mp4', 'webm', 'mov', 'avi', 'mkv'].includes(ext)) return 'video';
+        if (['mp3', 'wav', 'ogg', 'm4a', 'flac'].includes(ext)) return 'audio';
+        return 'image';
+    };
+
+    const filteredItems = items.filter(item => filter === 'all' || getFileType(item) === filter);
+
+    return (
+        <div className="flex flex-col h-screen bg-[#1e1e1e] text-white overflow-hidden border border-gray-700">
+            {/* 1. Custom Title Bar */}
+            <div className="h-10 bg-black/40 flex items-center justify-between px-3 draggable" style={{ WebkitAppRegion: 'drag' }}>
+                <div className="flex items-center gap-2 font-bold text-sm text-green-400">
+                    <Wand2 size={16}/> Magic Downloader
+                </div>
+                <div className="flex gap-2" style={{ WebkitAppRegion: 'no-drag' }}>
+                    <button onClick={() => ipcRenderer.send('magic-window-control', 'minimize')} className="p-1 hover:bg-white/10 rounded"><Minus size={14}/></button>
+                    <button onClick={() => ipcRenderer.send('magic-window-control', 'maximize')} className="p-1 hover:bg-white/10 rounded"><Maximize2 size={14}/></button>
+                    <button onClick={() => ipcRenderer.send('magic-window-control', 'close')} className="p-1 hover:bg-red-500 rounded"><X size={14}/></button>
+                </div>
+            </div>
+
+            {/* 2. Input & Drop Zone */}
+            <div className="p-4 border-b border-white/10 bg-white/5">
+                <div className="flex gap-2 mb-3">
+                    <input 
+                        value={inputLink}
+                        onChange={(e) => setInputLink(e.target.value)}
+                        placeholder="Dán đường dẫn ảnh/video/web vào đây..."
+                        className="flex-1 bg-black/20 border border-white/10 rounded-lg px-3 py-2 text-sm focus:border-green-500 outline-none"
+                        onKeyDown={(e) => e.key === 'Enter' && handleProcess(inputLink)}
+                    />
+                    <button 
+                        onClick={() => handleProcess(inputLink)}
+                        disabled={isProcessing}
+                        className="bg-green-600 hover:bg-green-500 px-4 py-2 rounded-lg font-bold text-sm flex items-center gap-2 disabled:opacity-50"
+                    >
+                        {isProcessing ? <RefreshCw size={16} className="animate-spin"/> : <Download size={16}/>}
+                        Quét
+                    </button>
+                </div>
+                
+                {/* Internal Drop Zone */}
+                <div 
+                    className="border-2 border-dashed border-white/10 rounded-xl p-4 text-center hover:border-green-500/50 hover:bg-green-500/5 transition-all cursor-default"
+                    onDragOver={e => e.preventDefault()}
+                    onDrop={(e) => {
+                        e.preventDefault();
+                        const text = e.dataTransfer.getData('text');
+                        if (text) handleProcess(text);
+                    }}
+                >
+                    <p className="text-xs text-gray-400 pointer-events-none">Hoặc kéo thả link vào đây để thêm</p>
+                </div>
+            </div>
+
+            {/* 3. Filter Tabs */}
+            <div className="flex gap-1 p-2 bg-black/20 overflow-x-auto">
+                {[
+                    { id: 'all', icon: LayoutGrid, label: 'Tất cả' },
+                    { id: 'image', icon: ImageIcon, label: 'Hình ảnh' },
+                    { id: 'video', icon: Film, label: 'Video' },
+                    { id: 'audio', icon: Music, label: 'Âm thanh' }
+                ].map(tab => (
+                    <button 
+                        key={tab.id}
+                        onClick={() => setFilter(tab.id)}
+                        className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${filter === tab.id ? 'bg-green-600 text-white' : 'hover:bg-white/10 text-gray-400'}`}
+                    >
+                        <tab.icon size={14}/> {tab.label} <span className="opacity-60 ml-1">{tab.id === 'all' ? items.length : items.filter(i => getFileType(i) === tab.id).length}</span>
+                    </button>
+                ))}
+            </div>
+
+            {/* 4. Grid Results */}
+            <div className="flex-1 overflow-y-auto p-4 custom-scrollbar">
+                {filteredItems.length === 0 ? (
+                    <div className="h-full flex flex-col items-center justify-center text-gray-500 opacity-50">
+                        <PackageOpen size={48} className="mb-2"/>
+                        <p>Danh sách trống</p>
+                    </div>
+                ) : (
+                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+                        {filteredItems.map((item, idx) => (
+                            <div key={idx} className="bg-black/20 border border-white/5 rounded-lg overflow-hidden group hover:border-green-500/50 transition-all">
+                                <div className="aspect-video bg-black/50 relative flex items-center justify-center">
+                                    {getFileType(item) === 'video' && <video src={`local-resource://${item.localPath}`} className="w-full h-full object-contain"/>}
+                                    {getFileType(item) === 'image' && <img src={`local-resource://${item.localPath}`} className="w-full h-full object-cover"/>}
+                                    {getFileType(item) === 'audio' && <Music size={32} className="text-gray-500"/>}
+                                    
+                                    <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 flex items-center justify-center gap-2 transition-opacity">
+                                        <button onClick={() => ipcRenderer.invoke('copy-image-to-clipboard', item.localPath)} className="p-2 bg-white text-black rounded hover:bg-gray-200" title="Copy"><Copy size={16}/></button>
+                                        <button onClick={() => ipcRenderer.invoke('save-file-from-temp', { sourcePath: item.localPath, defaultName: item.name })} className="p-2 bg-blue-600 text-white rounded hover:bg-blue-500" title="Lưu"><Download size={16}/></button>
+                                    </div>
+                                    <span className="absolute bottom-1 right-1 text-[9px] bg-black/60 px-1 rounded text-white font-mono">{(item.size / 1024).toFixed(0)} KB</span>
+                                </div>
+                                <div className="p-2">
+                                    <div className="text-xs font-bold truncate text-gray-300" title={item.name}>{item.name}</div>
+                                    <div className="text-[10px] text-gray-500 truncate mt-0.5">{item.url}</div>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                )}
+            </div>
+        </div>
+    );
+}
+
+function MainApp() {
   // --- STATE ---
   const [bookmarks, setBookmarks] = useState([]); 
   const defaultSettings = { theme: 'dark', lang: 'vi', font: 'Inter', bgImage: null, bgOpacity: 85, accentColor: '#22d3ee', gridCols: 6 };
@@ -144,6 +294,9 @@ export default function BookmarkApp() {
   const [isProcessingDrop, setIsProcessingDrop] = useState(false);
   const [dropResults, setDropResults] = useState(null); // Danh sách file tải được
   const [isDropZoneHovered, setIsDropZoneHovered] = useState(false);
+
+  // [MỚI] State kiểm soát việc ẩn/hiện bảng kết quả (tách biệt với dữ liệu)
+  const [isDropResultOpen, setIsDropResultOpen] = useState(false);
 
   // [ĐA NHIỆM - TABS] 
   const [sessions, setSessions] = useState([]); 
@@ -206,6 +359,7 @@ export default function BookmarkApp() {
 
   useEffect(() => { loadData(); }, []);
 
+  
   // [NEW] XỬ LÝ KÉO THẢ LINK
   const handleDropLink = async (e) => {
       e.preventDefault();
@@ -215,13 +369,14 @@ export default function BookmarkApp() {
       if (!text || !text.startsWith('http')) return;
 
       setIsProcessingDrop(true);
+      setDropResults(null); // Xóa dữ liệu cũ khi bắt đầu tải cái mới
       
-      // Gọi xuống Backend để xử lý (Tải ngầm & Lọc 100MB)
       const result = await ipcRenderer.invoke('process-drop-link', text);
       
       setIsProcessingDrop(false);
       if (result.success) {
-          setDropResults(result.items); // Hiển thị kết quả
+          setDropResults(result.items);
+          setIsDropResultOpen(true); // [MỚI] Tự động mở bảng khi xong
       } else {
           alert('Lỗi phân tích: ' + result.error);
       }
@@ -644,32 +799,44 @@ export default function BookmarkApp() {
                     </>
                 )}
             </div>
-{/* [NEW] DROP ZONE (Vùng thả link) */}
+                
+{/* [GIAO DIỆN MỚI] KHU VỰC MAGIC TOOL - LUÔN HIỂN THỊ */}
             <div 
-                className={`relative flex items-center justify-center h-8 px-3 mx-2 rounded-lg border-2 border-dashed transition-all duration-300 ${
-                    isDropZoneHovered 
-                    ? 'border-blue-500 bg-blue-500/10 w-40' 
-                    : isProcessingDrop 
-                        ? 'border-yellow-500 bg-yellow-500/10 w-32' 
-                        : 'border-transparent hover:border-gray-500/30 w-10 hover:w-32 group'
-                }`}
+                className="flex items-center gap-2 mx-2 pl-2 border-l border-gray-500/20"
+                style={{ WebkitAppRegion: 'no-drag' }}  // <--- [QUAN TRỌNG] THÊM DÒNG NÀY
+                // Bắt sự kiện kéo thả cho CẢ CỤM này -> Dễ trúng hơn
                 onDragOver={(e) => { e.preventDefault(); setIsDropZoneHovered(true); }}
                 onDragLeave={() => setIsDropZoneHovered(false)}
-                onDrop={handleDropLink}
-                style={{ WebkitAppRegion: 'no-drag' }}
+                onDrop={async (e) => {
+                    e.preventDefault();
+                    setIsDropZoneHovered(false);
+                    const text = e.dataTransfer.getData('text');
+                    if (text) {
+                        setIsProcessingDrop(true);
+                        const result = await ipcRenderer.invoke('process-drop-link', text);
+                        setIsProcessingDrop(false);
+                        if (result.success) {
+                            setDropResults(prev => result.items); 
+                            ipcRenderer.send('open-magic-tool', result.items);
+                        }
+                    }
+                }}
             >
-                {/* Icon hiển thị */}
-                {isProcessingDrop ? (
-                    <RefreshCw size={16} className="animate-spin text-yellow-500"/>
-                ) : (
-                    <div className="flex items-center gap-2 overflow-hidden whitespace-nowrap">
-                        <Upload size={18} className={`${isDropZoneHovered ? 'text-blue-500' : 'opacity-50'}`}/>
-                        {/* Chữ chỉ hiện khi hover hoặc đang kéo file vào */}
-                        <span className={`text-xs font-bold transition-opacity duration-200 ${isDropZoneHovered || 'group-hover:opacity-100 opacity-0'}`}>
-                            {isDropZoneHovered ? 'Thả link vào đây' : 'Magic Drop'}
-                        </span>
-                    </div>
-                )}
+
+                {/* 2. NÚT MỞ HỘP (VUÔNG VẮN) */}
+                <button
+                    onClick={() => ipcRenderer.send('open-magic-tool', null)}
+                    className={`
+                        w-8 h-8 flex items-center justify-center rounded-lg border transition-all active:scale-95
+                        ${dropResults && dropResults.length > 0 
+                            ? 'bg-green-500 text-white border-green-600 shadow-lg shadow-green-500/20' // Có đồ: Xanh lá nổi bật
+                            : 'bg-white dark:bg-slate-800 border-gray-200 dark:border-gray-700 text-gray-500 hover:text-blue-500 hover:border-blue-500'} // Trống: Màu cơ bản
+                    `}
+                    title="Mở Magic Downloader"
+                >
+                     {/* Nếu có đồ thì hiện Hộp Đóng, nếu không thì Hộp Mở */}
+                    {dropResults && dropResults.length > 0 ? <PackageCheck size={16}/> : <PackageOpen size={16}/>}
+                </button>
             </div>            
             {/* Window Controls */}
             <div className="flex items-center gap-1 pl-4" style={{ WebkitAppRegion: 'no-drag' }}>
@@ -947,16 +1114,16 @@ export default function BookmarkApp() {
       {isEmptyTrashOpen && (<div className="fixed inset-0 z-[9000] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm" onClick={() => setIsEmptyTrashOpen(false)}><div className={`w-full max-w-xs rounded-2xl p-6 text-center shadow-2xl ${isDark ? 'bg-slate-900 border border-slate-700' : 'bg-white'}`} onClick={e => e.stopPropagation()}><Trash2 size={40} className="mx-auto text-red-500 mb-4 bg-red-500/10 p-2 rounded-full"/><h3 className="font-bold text-lg mb-2">{t('emptyConfirmTitle')}</h3><p className="text-sm opacity-60 mb-6">{t('emptyConfirmDesc')}</p><div className="flex gap-3"><button onClick={() => setIsEmptyTrashOpen(false)} className="flex-1 py-2 rounded-lg font-bold border opacity-60 hover:opacity-100">{t('cancel')}</button><button onClick={executeEmptyTrash} className="flex-1 py-2 rounded-lg font-bold bg-red-500 text-white shadow-lg">{t('delete')}</button></div></div></div>)}
       {itemToDelete && (<div className="fixed inset-0 z-[9000] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm" onClick={() => setItemToDelete(null)}><div className={`w-full max-w-xs rounded-2xl p-6 text-center shadow-2xl ${isDark ? 'bg-slate-900 border border-slate-700' : 'bg-white'}`} onClick={e => e.stopPropagation()}><AlertTriangle size={40} className="mx-auto text-red-500 mb-4 bg-red-500/10 p-2 rounded-full"/><h3 className="font-bold text-lg mb-6">{activeTab === 'trash' ? t('deletePermanentTitle') : t('deleteConfirmTitle')}</h3><div className="flex gap-3"><button onClick={() => setItemToDelete(null)} className="flex-1 py-2 rounded-lg font-bold border opacity-60 hover:opacity-100">{t('cancel')}</button><button onClick={executeDelete} className="flex-1 py-2 rounded-lg font-bold bg-red-500 text-white shadow-lg">{t('delete')}</button></div></div></div>)}
       {isModalOpen && (<div className="fixed inset-0 z-[9000] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm" onClick={() => setIsModalOpen(false)}><div className={`w-full max-w-lg rounded-2xl p-0 shadow-2xl overflow-hidden ${isDark ? 'bg-slate-900' : 'bg-white'}`} onClick={e => e.stopPropagation()}><div className="p-4 border-b border-gray-500/10 flex justify-between items-center bg-black/5"><h3 className="font-bold">{editingId ? t('editTitle') : t('addTitle')}</h3><button onClick={() => setIsModalOpen(false)}><X size={18}/></button></div><form onSubmit={handleSaveBookmark} className="p-6 space-y-4"><div><label className="text-xs font-bold uppercase opacity-60 mb-1 block">{t('urlLabel')} <span className="text-red-500">*</span></label><div className="relative"><Globe size={16} className="absolute left-3 top-3 opacity-50"/><input autoFocus placeholder="example.com" className="w-full pl-9 pr-3 py-2.5 rounded-xl border bg-transparent outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all" value={formData.url} onChange={e => setFormData({...formData, url: e.target.value})} /></div></div><div><label className="text-xs font-bold uppercase opacity-60 mb-1 block">{t('titleLabel')}</label><input placeholder="My Website" className="w-full px-3 py-2.5 rounded-xl border bg-transparent outline-none focus:ring-2 focus:ring-blue-500 transition-all" value={formData.title} onChange={e => setFormData({...formData, title: e.target.value})} /></div><div><label className="text-xs font-bold uppercase opacity-60 mb-1 block">{t('iconLabel')}</label><div className="flex gap-2"><input type="text" placeholder="Image URL..." className="flex-1 px-3 py-2.5 rounded-xl border bg-transparent outline-none focus:ring-2 focus:ring-blue-500" value={formData.iconUrl} onChange={e => setFormData({...formData, iconUrl: e.target.value})} /><input type="file" ref={fileInputRef} className="hidden" accept="image/*" onChange={handleIconUpload} /><button type="button" onClick={() => fileInputRef.current?.click()} className="px-3 border rounded-xl hover:bg-black/5"><Upload size={18}/></button></div></div><div className="pt-4 flex justify-between gap-3">{editingId ? (<button type="button" onClick={handleDeleteFromModal} className="px-4 py-2 rounded-xl font-bold text-red-500 bg-red-500/10 hover:bg-red-500 hover:text-white transition-colors">{t('delete')}</button>) : (<div></div>)}<div className="flex gap-3"><button type="button" onClick={() => setIsModalOpen(false)} className="px-5 py-2 rounded-xl font-bold opacity-60 hover:opacity-100 hover:bg-black/5">{t('cancel')}</button><button type="submit" className="px-6 py-2 rounded-xl font-bold text-white shadow-lg transform active:scale-95 transition-all" style={{ backgroundColor: currentAccent }}>{editingId ? t('update') : t('save')}</button></div></div></form></div></div>)}
-    {/* [NEW] MODAL KẾT QUẢ DROP ZONE */}
-      {dropResults && (
-        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/80 backdrop-blur-md" onClick={() => setDropResults(null)}>
+{/* [NEW] MODAL KẾT QUẢ - SỬA LẠI LOGIC HIỂN THỊ */}
+      {isDropResultOpen && dropResults && (
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/80 backdrop-blur-md" onClick={() => setIsDropResultOpen(false)}>
             <div className="w-[80vw] h-[80vh] bg-[#1e1e1e] rounded-2xl border border-white/10 flex flex-col overflow-hidden shadow-2xl" onClick={e => e.stopPropagation()}>
-                {/* Header Modal */}
+                {/* Header */}
                 <div className="p-4 border-b border-white/10 flex justify-between items-center bg-black/20">
                     <h3 className="font-bold text-white flex items-center gap-2">
-                        <Wand2 className="text-purple-500"/> Kết quả phân tích ({dropResults.length})
+                        <PackageOpen className="text-green-500"/> Kho dữ liệu tạm ({dropResults.length})
                     </h3>
-                    <button onClick={() => setDropResults(null)} className="p-2 hover:bg-white/10 rounded-full"><X size={20} className="text-white"/></button>
+                    <button onClick={() => setIsDropResultOpen(false)} className="p-2 hover:bg-white/10 rounded-full"><X size={20} className="text-white"/></button>
                 </div>
 
                 {/* Grid Content */}
@@ -964,10 +1131,9 @@ export default function BookmarkApp() {
                     <div className="grid grid-cols-4 md:grid-cols-5 gap-4">
                         {dropResults.map((item, idx) => (
                             <div key={idx} className="relative group bg-black/40 rounded-xl overflow-hidden border border-white/5 hover:border-blue-500 transition-all">
-                                {/* TRƯỜNG HỢP 1: File nhỏ (<100MB) đã tải xong */}
                                 {item.isDownloaded ? (
                                     <>
-                                        {/* Hiển thị ảnh/video từ file tạm */}
+                                        {/* Preview */}
                                         <div className="aspect-square flex items-center justify-center bg-checkerboard">
                                             {item.name.endsWith('.mp4') ? (
                                                 <video src={`local-resource://${item.localPath}`} className="w-full h-full object-cover"/>
@@ -975,31 +1141,36 @@ export default function BookmarkApp() {
                                                 <img src={`local-resource://${item.localPath}`} className="w-full h-full object-cover"/>
                                             )}
                                         </div>
-                                        {/* Nút Copy */}
-                                        <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 flex items-center justify-center gap-2 transition-opacity">
+                                        
+                                        {/* [MỚI] Action Buttons Overlay */}
+                                        <div className="absolute inset-0 bg-black/70 opacity-0 group-hover:opacity-100 flex flex-col items-center justify-center gap-2 transition-opacity p-2">
+                                            {/* Nút Copy */}
                                             <button 
                                                 onClick={() => ipcRenderer.invoke('copy-image-to-clipboard', item.localPath)}
-                                                className="px-3 py-1.5 bg-blue-600 text-white text-xs font-bold rounded-lg hover:bg-blue-500"
+                                                className="w-full py-1.5 bg-white text-black text-[10px] font-bold rounded hover:bg-gray-200 flex items-center justify-center gap-1"
                                             >
-                                                <Copy size={14} className="inline mr-1"/> Copy
+                                                <Copy size={12}/> Copy
+                                            </button>
+                                            
+                                            {/* Nút Download */}
+                                            <button 
+                                                onClick={() => ipcRenderer.invoke('save-file-from-temp', { sourcePath: item.localPath, defaultName: item.name })}
+                                                className="w-full py-1.5 bg-blue-600 text-white text-[10px] font-bold rounded hover:bg-blue-500 flex items-center justify-center gap-1"
+                                            >
+                                                <Download size={12}/> Lưu
                                             </button>
                                         </div>
-                                        <div className="absolute bottom-1 right-1 bg-black/50 px-1 rounded text-[10px] text-white">
-                                            {(item.size / 1024).toFixed(1)} KB
+
+                                        <div className="absolute bottom-1 right-1 bg-black/50 px-1 rounded text-[10px] text-white pointer-events-none">
+                                            {(item.size / 1024).toFixed(0)} KB
                                         </div>
                                     </>
                                 ) : (
-                                    // TRƯỜNG HỢP 2: File quá lớn (>100MB) - Chỉ hiện Link
+                                    // File lớn
                                     <div className="aspect-square flex flex-col items-center justify-center p-2 text-center bg-red-900/20">
                                         <AlertTriangle size={24} className="text-red-500 mb-2"/>
                                         <span className="text-xs font-bold text-red-400">FILE LỚN</span>
-                                        <span className="text-[10px] text-gray-400 mt-1">{(item.size / (1024*1024)).toFixed(1)} MB</span>
-                                        <button 
-                                            onClick={() => window.open(item.url, '_blank')} 
-                                            className="mt-2 px-2 py-1 bg-red-600/20 border border-red-500 text-red-500 text-[10px] rounded hover:bg-red-600 hover:text-white"
-                                        >
-                                            Mở Link Gốc
-                                        </button>
+                                        <button onClick={() => window.open(item.url, '_blank')} className="mt-2 px-2 py-1 border border-red-500 text-red-500 text-[10px] rounded hover:bg-red-600 hover:text-white">Mở Link</button>
                                     </div>
                                 )}
                             </div>
@@ -1007,19 +1178,37 @@ export default function BookmarkApp() {
                     </div>
                 </div>
                 
-                {/* Footer */}
+                {/* Footer - Chỉ đóng chứ không xóa dữ liệu */}
                 <div className="p-3 border-t border-white/10 bg-black/20 text-right">
-                    <span className="text-xs text-gray-500 italic mr-4">Dữ liệu tạm sẽ bị xóa khi tắt ứng dụng</span>
-                    <button onClick={() => setDropResults(null)} className="px-6 py-2 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl">Đóng</button>
+                    <span className="text-xs text-gray-500 italic mr-4">Dữ liệu vẫn được giữ trong hộp cho đến khi bạn tắt App</span>
+                    <button onClick={() => setIsDropResultOpen(false)} className="px-6 py-2 bg-gray-600 hover:bg-gray-500 text-white font-bold rounded-xl">Ẩn đi</button>
                 </div>
             </div>
         </div>
       )}
-    </div>
+</div>
   );
 }
+// --- [BƯỚC 3] ROUTER ĐIỀU HƯỚNG ---
+// Đây sẽ là component chính được chạy đầu tiên
+export default function AppEntry() {
+    const [route, setRoute] = useState(window.location.hash);
 
-// Thay thế hoàn toàn function BookmarkCard ở cuối file
+    useEffect(() => {
+        // Lắng nghe sự thay đổi của hash trên URL (ví dụ: #magic-tool)
+        const handleHashChange = () => setRoute(window.location.hash);
+        window.addEventListener('hashchange', handleHashChange);
+        return () => window.removeEventListener('hashchange', handleHashChange);
+    }, []);
+
+    // Nếu URL có đuôi #magic-tool -> Hiển thị Cửa sổ Magic Downloader
+    if (route === '#magic-tool') {
+        return <MagicToolWindow />;
+    }
+
+    // Mặc định -> Hiển thị App quản lý Bookmark chính
+    return <MainApp />;
+}
 // Thay thế hoàn toàn function BookmarkCard ở cuối file
 function BookmarkCard({ 
   data, getFavicon, isDark, isTrash, 
