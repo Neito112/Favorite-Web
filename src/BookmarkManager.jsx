@@ -133,6 +133,8 @@ export default function BookmarkApp() {
   const [isEmptyTrashOpen, setIsEmptyTrashOpen] = useState(false); 
   const [formData, setFormData] = useState({ title: '', url: '', iconUrl: '' });
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [isHeaderMenuOpen, setIsHeaderMenuOpen] = useState(false);
+  const headerMenuRef = useRef(null); // Ref để click ra ngoài thì đóng
   
   const [isFontDropdownOpen, setIsFontDropdownOpen] = useState(false);
   const [currentZoom, setCurrentZoom] = useState(0); 
@@ -224,7 +226,7 @@ export default function BookmarkApp() {
   // Khi cửa sổ nhỏ lại, ta lấy chiều rộng chia cho targetSize để ra số cột mới.
   const REFERENCE_WIDTH = 1550;
   const REFERENCE_PADDING = 48; // Padding trái phải 24px * 2
-  const sidebarWidthAtRef = 256; // Width sidebar chuẩn
+  const sidebarWidthAtRef = 170; // Width sidebar chuẩn
   
   // Kích thước ô lưới "chuẩn" mà người dùng muốn (tính tại độ phân giải 1280px)
   const targetItemWidth = (REFERENCE_WIDTH - sidebarWidthAtRef - REFERENCE_PADDING) / (settings.gridCols || 6);
@@ -496,6 +498,22 @@ export default function BookmarkApp() {
   }, [popupUrl, isModalOpen, isSettingsOpen, itemToDelete, isEmptyTrashOpen]);
 
   useEffect(() => {
+    function handleClickOutside(event) { 
+        // Xử lý đóng Settings (code cũ)
+        if (settingsRef.current && !settingsRef.current.contains(event.target)) { 
+            setIsSettingsOpen(false); 
+            setIsFontDropdownOpen(false); 
+        }
+        
+        // [THÊM ĐOẠN NÀY] Xử lý đóng Header Menu khi click ra ngoài
+        if (headerMenuRef.current && !headerMenuRef.current.contains(event.target)) {
+            setIsHeaderMenuOpen(false);
+        }
+    }
+    document.addEventListener("mousedown", handleClickOutside); 
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [settingsRef, headerMenuRef]); // Nhớ thêm headerMenuRef vào dependency
+  useEffect(() => {
     function handleClickOutside(event) { if (settingsRef.current && !settingsRef.current.contains(event.target)) { setIsSettingsOpen(false); setIsFontDropdownOpen(false); } }
     document.addEventListener("mousedown", handleClickOutside); return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [settingsRef]);
@@ -554,7 +572,7 @@ export default function BookmarkApp() {
 
   return (
     // [MOD] Min-width đảm bảo không vỡ khung, overflow-hidden để cắt phần dư
-    <div className="flex flex-col h-screen overflow-hidden select-none transition-all duration-300 min-w-[360px] min-h-[500px]" style={theme.appStyle}>
+    <div className="flex flex-col h-screen overflow-hidden select-none transition-all duration-300 min-w-[435px] min-h-[295px]" style={theme.appStyle}>
       
        <style>{`
         ::-webkit-scrollbar { width: 8px; height: 8px; }
@@ -698,7 +716,7 @@ export default function BookmarkApp() {
                         key={session.sessionId} 
                         className={`absolute inset-0 z-20 bg-white flex flex-col ${isActive ? 'flex' : 'hidden'}`}
                     >
-                        <div className="flex-1 relative w-full h-full bg-white">
+                        <div className="flex-1 relative w-full h-full bg-[#18191a] overflow-hidden">
                             <webview 
                                 ref={(el) => {
                                     if (el) {
@@ -725,7 +743,7 @@ export default function BookmarkApp() {
                 
                 {/* 1. SIDEBAR: CO GIÃN */}
                 <aside 
-                    className={`flex-col border-r transition-all duration-300 ${isSidebarOpen ? 'w-64 flex' : 'w-0 hidden'} backdrop-blur-xl origin-top-left`} 
+                    className={`flex-col border-r transition-all duration-300 ${isSidebarOpen ? 'w-[170px] flex' : 'w-0 hidden'} backdrop-blur-xl origin-top-left`} 
                     style={{ ...theme.glassPanel, zoom: uiScale }} // Scale Sidebar
                 >
                    <nav className="p-4 space-y-1">
@@ -740,9 +758,71 @@ export default function BookmarkApp() {
                         style={{ ...theme.glassPanel, zoom: uiScale }} // Scale Header
                    >
                       <div className="flex items-center gap-4">
-                          <button onClick={() => setIsSidebarOpen(!isSidebarOpen)} className="p-2 rounded-lg hover:bg-black/5"><Menu size={20}/></button>
-                          <h2 className="text-xl font-bold tracking-tight">{t(activeTab === 'all' ? 'dashboard' : activeTab)}</h2>
-                      </div>
+    {/* Nút Toggle Sidebar */}
+    <button onClick={() => setIsSidebarOpen(!isSidebarOpen)} className="p-2 rounded-lg hover:bg-black/5 dark:hover:bg-white/5 transition-colors">
+        <Menu size={20}/>
+    </button>
+    
+    {/* [LOGIC MỚI] MENU TIÊU ĐỀ (Dropdown) */}
+    <div className="relative" ref={headerMenuRef}>
+        <button 
+            onClick={() => {
+                // Chỉ cho phép mở khi Sidebar đang đóng (hoặc bạn thích mở lúc nào cũng được thì bỏ check !isSidebarOpen)
+                if (!isSidebarOpen) setIsHeaderMenuOpen(!isHeaderMenuOpen);
+            }}
+            // Nếu Sidebar đóng -> Hiện trỏ chuột và hover. Nếu Sidebar mở -> Chỉ là text thường
+            className={`flex items-center gap-2 px-2 py-1 rounded-lg transition-all ${
+                !isSidebarOpen 
+                ? 'cursor-pointer hover:bg-black/5 dark:hover:bg-white/5 pr-3' 
+                : 'cursor-default'
+            }`}
+        >
+            <h2 className="text-xl font-bold tracking-tight select-none">
+                {t(activeTab === 'all' ? 'dashboard' : activeTab)}
+            </h2>
+            
+            {/* Mũi tên chỉ hiện khi Sidebar bị ẩn */}
+            {!isSidebarOpen && (
+                <ChevronDown 
+                    size={18} 
+                    className={`opacity-50 transition-transform duration-200 ${isHeaderMenuOpen ? 'rotate-180' : ''}`}
+                />
+            )}
+        </button>
+
+        {/* MENU XỔ XUỐNG */}
+        {isHeaderMenuOpen && !isSidebarOpen && (
+            <div 
+                className={`absolute top-full left-0 mt-2 w-56 rounded-xl shadow-2xl border p-2 animate-in fade-in zoom-in-95 duration-200 z-[100] origin-top-left flex flex-col gap-1`}
+                style={theme.glassPanel} // Tận dụng style kính mờ có sẵn
+            >
+                {[
+                    { id: 'all', icon: Folder, label: 'dashboard' },
+                    { id: 'favorites', icon: Star, label: 'favorites' },
+                    { id: 'trash', icon: Trash2, label: 'trash' }
+                ].map((item) => (
+                    <button
+                        key={item.id}
+                        onClick={() => {
+                            setActiveTab(item.id);
+                            setIsHeaderMenuOpen(false); // Đóng menu sau khi chọn
+                        }}
+                        className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-bold transition-all ${
+                            activeTab === item.id 
+                            ? 'text-white shadow-md' 
+                            : 'opacity-70 hover:opacity-100 hover:bg-black/5 dark:hover:bg-white/10'
+                        }`}
+                        style={activeTab === item.id ? { backgroundColor: currentAccent } : {}}
+                    >
+                        <item.icon size={18} />
+                        {t(item.label)}
+                        {activeTab === item.id && <Check size={14} className="ml-auto"/>}
+                    </button>
+                ))}
+            </div>
+        )}
+    </div>
+</div>
                       
                       <div className="flex items-center gap-3">
                           <div className="relative" ref={settingsRef}>
@@ -798,7 +878,7 @@ export default function BookmarkApp() {
             </div>
 
             {/* --- POPUP NỘI BỘ --- */}
-            {popupUrl && (<div className="absolute inset-0 z-[150] bg-black animate-in fade-in zoom-in-95 duration-200"><button onClick={() => setPopupUrl(null)} className="absolute top-4 right-4 z-[200] p-2.5 rounded-full bg-black/50 text-white/80 hover:bg-red-600 hover:text-white hover:scale-110 transition-all backdrop-blur-md shadow-xl border border-white/20 group cursor-pointer" title="Đóng"><X size={24} className="group-hover:rotate-90 transition-transform duration-300"/></button><webview ref={setPopupWebviewRef} src={popupUrl} className="w-full h-full bg-white" style={{ display: 'inline-flex' }}/></div>)}
+            {popupUrl && (<div className="absolute inset-0 z-[150] bg-black animate-in fade-in zoom-in-95 duration-200 overflow-hidden"><button onClick={() => setPopupUrl(null)} className="absolute top-4 right-4 z-[200] p-2.5 rounded-full bg-black/50 text-white/80 hover:bg-red-600 hover:text-white hover:scale-110 transition-all backdrop-blur-md shadow-xl border border-white/20 group cursor-pointer" title="Đóng"><X size={24} className="group-hover:rotate-90 transition-transform duration-300"/></button><webview ref={setPopupWebviewRef} src={popupUrl} className="w-full h-full bg-white" style={{ display: 'inline-flex' }}/></div>)}
             
             {/* --- CONTEXT MENU (THÔNG MINH) --- */}
             {contextMenu.visible && (<div className="fixed inset-0 z-[190] cursor-default" onClick={() => setContextMenu({ ...contextMenu, visible: false })} onContextMenu={(e) => { e.preventDefault(); setContextMenu({ ...contextMenu, visible: false }); }}></div>)}
