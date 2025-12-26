@@ -1,6 +1,6 @@
 {
   "name": "favo-app",
-  "version": "0.9.20",
+  "version": "0.9.21",
   "description": "Bookmark Manager Favo",
   "main": "src/main.cjs",
   "author": "Neito",
