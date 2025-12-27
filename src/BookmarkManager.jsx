@@ -123,10 +123,17 @@ const getFavicon = (url, localPath = null) => {
 // --- [NEW COMPONENT] GIAO DIỆN CỬA SỔ MAGIC TOOL ---
 function MagicToolWindow() {
     const [items, setItems] = useState([]);
+    // [THÊM MỚI] State kiểm soát hiệu ứng mở cửa sổ
+    const [isAnimated, setIsAnimated] = useState(false);
     const [filter, setFilter] = useState('all'); // all, image, video, audio
     const [inputLink, setInputLink] = useState('');
     const [isProcessing, setIsProcessing] = useState(false);
 
+    useEffect(() => {
+        // Kích hoạt animation sau khi cửa sổ load xong
+        const timer = setTimeout(() => setIsAnimated(true), 50);
+        return () => clearTimeout(timer);
+    }, []);
     useEffect(() => {
         // Lắng nghe dữ liệu từ Main Process gửi sang
         ipcRenderer.on('magic-data-update', (event, newItems) => {
@@ -168,7 +175,12 @@ function MagicToolWindow() {
     const filteredItems = items.filter(item => filter === 'all' || getFileType(item) === filter);
 
     return (
-        <div className="flex flex-col h-screen bg-[#1e1e1e] text-white overflow-hidden border border-gray-700">
+        // [CẬP NHẬT] Thêm transition-all, duration, scale và opacity
+        <div className={`
+            flex flex-col h-screen bg-[#1e1e1e] text-white overflow-hidden border border-gray-700
+            transition-all duration-300 ease-out transform origin-center
+            ${isAnimated ? 'scale-100 opacity-100' : 'scale-90 opacity-0'}
+        `}>
             {/* 1. Custom Title Bar */}
             <div className="h-10 bg-black/40 flex items-center justify-between px-3 draggable" style={{ WebkitAppRegion: 'drag' }}>
                 <div className="flex items-center gap-2 font-bold text-sm text-green-400">

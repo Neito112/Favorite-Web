@@ -98,8 +98,6 @@ function downloadImage(url, filepath) {
 
 // --- [BỔ SUNG QUAN TRỌNG] QUẢN LÝ CỬA SỔ MAGIC TOOL ---
 
-// 1. Mở cửa sổ Magic Tool
-// 1. Mở cửa sổ Magic Tool (Cập nhật Logic Toggle)
 // 1. Mở cửa sổ Magic Tool (Đã sửa lỗi Toggle)
 ipcMain.on('open-magic-tool', (event, initialData) => {
     // Nếu cửa sổ đang tồn tại
@@ -133,6 +131,12 @@ ipcMain.on('open-magic-tool', (event, initialData) => {
         title: 'Magic Downloader',
         icon: fs.existsSync(APP_ICON_PATH) ? APP_ICON_PATH : null,
         frame: false, 
+        
+        // [THÊM 2 DÒNG NÀY ĐỂ HỖ TRỢ ANIMATION]
+        transparent: true,            // Cho phép nền trong suốt
+        backgroundColor: '#00000000', // Mã màu trong suốt hoàn toàn
+        hasShadow: true,              // Đổ bóng cửa sổ (trên macOS/Windows)
+
         webPreferences: {
             nodeIntegration: true, 
             contextIsolation: false, 
