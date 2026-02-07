@@ -98,82 +98,94 @@ function downloadImage(url, filepath) {
 
 // --- [BỔ SUNG QUAN TRỌNG] QUẢN LÝ CỬA SỔ MAGIC TOOL ---
 
-// 1. Mở cửa sổ Magic Tool (Đã sửa lỗi Toggle)
-ipcMain.on('open-magic-tool', (event, initialData) => {
+// 1. Mở cửa sổ Magic Tool (Hỗ trợ Animation theo tọa độ)
+ipcMain.on('open-magic-tool', (event, payload) => {
+    // Chuẩn hóa dữ liệu đầu vào
+    let items = null;
+    let animCoords = null;
+
+    if (Array.isArray(payload)) {
+        items = payload; // Trường hợp kéo thả file (payload là mảng)
+    } else if (payload && payload.type === 'toggle') {
+        animCoords = { x: payload.x, y: payload.y }; // Trường hợp click nút
+    }
+
     // Nếu cửa sổ đang tồn tại
     if (magicWindow && !magicWindow.isDestroyed()) {
         
-        // TRƯỜNG HỢP A: Có dữ liệu mới (do Kéo thả Link) -> Luôn hiện và cập nhật
-        if (initialData) {
+        // CASE A: Có items mới (Kéo thả) -> Mở và update
+        if (items) {
             if (magicWindow.isMinimized()) magicWindow.restore();
-            magicWindow.show(); // Đảm bảo cửa sổ hiện lên
+            magicWindow.show();
             magicWindow.focus();
-            magicWindow.webContents.send('magic-data-update', initialData);
+            magicWindow.webContents.send('magic-data-update', items);
             return;
         }
 
-        // TRƯỜNG HỢP B: Bấm nút (initialData là null) -> Xử lý Bật/Tắt
-        // [FIX] Dùng isVisible() thay vì isFocused() để tránh lỗi mất focus khi click vào Main Window
+        // CASE B: Toggle (Click nút)
         if (magicWindow.isVisible()) {
-            magicWindow.close(); // Nếu đang hiện -> Đóng
+            magicWindow.close(); // Đang hiện -> Đóng
         } else {
             if (magicWindow.isMinimized()) magicWindow.restore();
-            magicWindow.show();  // Nếu đang ẩn -> Hiện
+            
+            // [QUAN TRỌNG] Gửi tọa độ animation trước khi hiện cửa sổ
+            if (animCoords) magicWindow.webContents.send('set-anim-origin', animCoords);
+            
+            magicWindow.show();
             magicWindow.focus();
         }
         return;
     }
 
-    // Nếu chưa có cửa sổ -> Tạo mới như bình thường
+    // Nếu chưa có cửa sổ -> Tạo mới
     magicWindow = new BrowserWindow({
         width: 800, height: 600,
         minWidth: 600, minHeight: 400,
         title: 'Magic Downloader',
         icon: fs.existsSync(APP_ICON_PATH) ? APP_ICON_PATH : null,
         frame: false, 
-        
-        // [THÊM 2 DÒNG NÀY ĐỂ HỖ TRỢ ANIMATION]
-        transparent: true,            // Cho phép nền trong suốt
-        backgroundColor: '#00000000', // Mã màu trong suốt hoàn toàn
-        hasShadow: true,              // Đổ bóng cửa sổ (trên macOS/Windows)
-
+        transparent: true,            
+        backgroundColor: '#00000000', 
+        hasShadow: true,              
         webPreferences: {
-            nodeIntegration: true, 
-            contextIsolation: false, 
-            webviewTag: true, 
-            webSecurity: false
+            nodeIntegration: true, contextIsolation: false, webviewTag: true, webSecurity: false
         }
     });
 
     const isDev = !app.isPackaged;
-    const url = isDev 
-        ? 'http://localhost:5173/#magic-tool' 
-        : `file://${path.join(__dirname, '../dist/index.html')}#magic-tool`;
+    const url = isDev ? 'http://localhost:5173/#magic-tool' : `file://${path.join(__dirname, '../dist/index.html')}#magic-tool`;
     
     magicWindow.loadURL(url);
 
+    // Khi load xong
     magicWindow.webContents.on('did-finish-load', () => {
-        if (initialData) magicWindow.webContents.send('magic-data-update', initialData);
+        // Gửi dữ liệu nếu có
+        if (items) magicWindow.webContents.send('magic-data-update', items);
+        // Gửi tọa độ để tính toán animation ngay lần mở đầu tiên
+        if (animCoords) magicWindow.webContents.send('set-anim-origin', animCoords);
     });
 
     magicWindow.on('closed', () => { magicWindow = null; });
 });
 
-// 2. Điều khiển cửa sổ (Thu nhỏ, Phóng to, Đóng)
-ipcMain.on('magic-window-control', (event, action) => {
-    const win = BrowserWindow.fromWebContents(event.sender);
-    if (!win) return;
-    switch (action) {
-        case 'minimize': win.minimize(); break;
-        case 'maximize': win.isMaximized() ? win.unmaximize() : win.maximize(); break;
-        case 'close': win.close(); break;
+// --- [FIX LAG] Tắt Hardware Acceleration để tránh lỗi GPU Cache trên Windows ---
+app.disableHardwareAcceleration(); 
+// [FIX] Dọn dẹp Cache nhẹ nhàng (Bỏ qua nếu đang bị khóa)
+try {
+    const userDataPath = app.getPath('userData');
+    const gpuCachePath = path.join(userDataPath, 'GPUCache');
+    if (fs.existsSync(gpuCachePath)) {
+        // Chỉ thử xóa, nếu lỗi thì bỏ qua để không làm rác log
+        try { fs.rmSync(gpuCachePath, { recursive: true, force: true }); } catch (err) {}
     }
-});
-
+} catch (e) {}
+// Các cấu hình cũ giữ nguyên
 app.commandLine.appendSwitch('ignore-certificate-errors');
 app.commandLine.appendSwitch('lang', 'vi');
 
-
+// Thêm cấu hình tối ưu bộ nhớ GPU (phòng hờ)
+app.commandLine.appendSwitch('force-gpu-mem-available-mb', '1024'); 
+app.commandLine.appendSwitch('disable-gpu-compositing');
 
 function createWindow() {
   initializeUserData();
@@ -204,10 +216,13 @@ function createWindow() {
 }
 
 app.whenReady().then(() => {
-  protocol.registerFileProtocol('local-resource', (request, callback) => {
-    const url = request.url.replace('local-resource://', '');
+  // [FIX] Xử lý đường dẫn ảnh: Cắt bỏ tham số ?t=... để Windows tìm đúng file
+protocol.registerFileProtocol('local-resource', (request, callback) => {
+    let url = request.url.replace('local-resource://', '');
+    // Quan trọng: Loại bỏ query string (ví dụ ?t=12345) trước khi đọc file
+    url = url.split('?')[0]; 
     try { return callback(decodeURI(url)); } catch (error) { console.error(error); }
-  });
+});
 
   createWindow();
 
@@ -301,20 +316,82 @@ ipcMain.handle('delete-bookmark', async (event, id) => {
   } catch (error) { return { success: false, error: error.message }; }
 });
 
+// [FIX FINAL] Hàm Update Bookmark: Xử lý thông minh việc giữ ảnh cũ hoặc lưu ảnh mới
 ipcMain.handle('update-bookmark', async (event, bookmarkData) => {
     try {
-        const jsonPath = path.join(BOOKMARKS_DIR, `${bookmarkData.id}.json`);
+        const id = bookmarkData.id;
+        const jsonPath = path.join(BOOKMARKS_DIR, `${id}.json`);
+        
         if (fs.existsSync(jsonPath)) {
+            // 1. Đọc dữ liệu CŨ từ file
             const oldData = JSON.parse(fs.readFileSync(jsonPath, 'utf-8'));
-            let pathForSave = bookmarkData.localIconPath ? path.basename(bookmarkData.localIconPath) : null;
-            const newData = { ...oldData, ...bookmarkData, localIconPath: pathForSave };
-            fs.writeFileSync(jsonPath, JSON.stringify(newData, null, 2));
-            return { success: true };
-        }
-        return { success: false };
-    } catch (error) { return { success: false, error: error.message }; }
-});
+            
+            // Mặc định giữ nguyên tên file ảnh cũ
+            let savedIconFilename = oldData.localIconPath ? path.basename(oldData.localIconPath) : null;
+            
+            // 2. Kiểm tra xem người dùng có gửi ảnh MỚI không?
+            // Nếu iconUrl khác với localIconPath cũ -> Có nghĩa là người dùng đã chọn ảnh mới
+            if (bookmarkData.iconUrl && !bookmarkData.iconUrl.startsWith('local-resource://') && !bookmarkData.iconUrl.includes(savedIconFilename)) {
+                
+                const iconFilename = `${id}_${Date.now()}.png`; // Thêm timestamp để tránh cache
+                const iconSavePath = path.join(ICONS_DIR, iconFilename);
+                
+                try {
+                    if (bookmarkData.iconUrl.startsWith('data:image')) {
+                        // Lưu ảnh từ Base64 (Upload từ máy)
+                        const base64Data = bookmarkData.iconUrl.replace(/^data:image\/\w+;base64,/, "");
+                        fs.writeFileSync(iconSavePath, base64Data, 'base64');
+                        // Xóa ảnh cũ nếu có để tiết kiệm dung lượng
+                        if (savedIconFilename) {
+                            try { fs.unlinkSync(path.join(ICONS_DIR, savedIconFilename)); } catch(e){}
+                        }
+                        savedIconFilename = iconFilename;
+                    } 
+                    else if (bookmarkData.iconUrl.startsWith('http')) {
+                        // Lưu ảnh từ Link Online
+                        await downloadImage(bookmarkData.iconUrl, iconSavePath);
+                        if (fs.existsSync(iconSavePath)) {
+                            // Xóa ảnh cũ
+                            if (savedIconFilename) {
+                                try { fs.unlinkSync(path.join(ICONS_DIR, savedIconFilename)); } catch(e){}
+                            }
+                            savedIconFilename = iconFilename;
+                        }
+                    }
+                } catch (e) {
+                    console.error("Lỗi lưu icon mới:", e);
+                }
+            }
 
+            // 3. Tạo data mới (Ghi đè thông tin mới vào cũ)
+            const newData = { 
+                ...oldData, 
+                title: bookmarkData.title || oldData.title, // Nếu title rỗng thì giữ cũ
+                url: bookmarkData.url || oldData.url,       // Nếu url rỗng thì giữ cũ
+                localIconPath: savedIconFilename 
+            };
+
+            // 4. Ghi đè file JSON (Quan trọng: Dùng try-catch riêng cho việc ghi file)
+            try {
+                fs.writeFileSync(jsonPath, JSON.stringify(newData, null, 2));
+            } catch (writeErr) {
+                console.error("Lỗi ghi file JSON (Access Denied?):", writeErr);
+                return { success: false, error: "Không thể ghi file (Lỗi quyền truy cập)" };
+            }
+            
+            // 5. Chuẩn bị dữ liệu trả về cho giao diện
+            const returnData = { ...newData };
+            if (returnData.localIconPath) {
+                 returnData.localIconPath = path.join(ICONS_DIR, returnData.localIconPath).replace(/\\/g, '/');
+            }
+            
+            return { success: true, data: returnData };
+        }
+        return { success: false, error: "Không tìm thấy Bookmark gốc" };
+    } catch (error) { 
+        return { success: false, error: error.message }; 
+    }
+});
 ipcMain.handle('save-settings', async (event, settings) => {
   try {
     if (settings.bgImage && settings.bgImage.startsWith('data:image')) {
