@@ -215,8 +215,8 @@ function createWindow() {
       // [QUAN TRỌNG] Load file từ dist
       mainWindow.loadFile(path.join(__dirname, 'dist/index.html'));
       
-      // [DEBUG] Nếu bị trắng màn hình ở bản build, bỏ comment dòng dưới để xem lỗi gì
-      // mainWindow.webContents.openDevTools(); 
+// [QUAN TRỌNG] Bật dòng này lên để debug lỗi trắng màn hình
+      mainWindow.webContents.openDevTools();
   }
 }
 app.whenReady().then(() => {
