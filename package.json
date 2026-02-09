@@ -3,6 +3,7 @@
   "version": "0.9.26",
   "description": "Bookmark Manager Favo",
   "main": "src/main.cjs",
+  "homepage": "./",
   "author": "Neito",
   "repository": {
     "type": "git",

@@ -1,9 +1,9 @@
 {
   "theme": "dark",
   "lang": "vi",
-  "font": "Inter, system-ui, -apple-system, sans-serif",
-  "bgImage": "local-resource://C:/Users/Neito/Desktop/webapp-manager/Favorite-Web/data/background.png",
-  "bgOpacity": 75,
-  "accentColor": "#654b4a",
-  "gridCols": 12
+  "font": "Inter",
+  "bgImage": "local-resource://C:/Users/HOMIE/AppData/Roaming/favo-app/UserData/background.png",
+  "bgOpacity": 85,
+  "accentColor": "#22d3ee",
+  "gridCols": 18
 }

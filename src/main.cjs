@@ -191,16 +191,27 @@ function createWindow() {
   initializeUserData();
   mainWindow = new BrowserWindow({
     width: 1280, height: 800,
-    minWidth: 435,  // [UPDATE] Giới hạn chiều rộng tối thiểu (cỡ điện thoại)
-    minHeight: 295, // [UPDATE] Giới hạn chiều cao tối thiểu
+    minWidth: 435, 
+    minHeight: 295,
     frame: false,
     autoHideMenuBar: true,
+    show: false, // [FIX 1] Ẩn cửa sổ lúc mới tạo để tránh "Flash trắng"
+    backgroundColor: '#1e1e1e', // [FIX 2] Đặt màu nền khớp với App để mượt hơn
     icon: fs.existsSync(APP_ICON_PATH) ? APP_ICON_PATH : null, 
     webPreferences: {
-      nodeIntegration: true, contextIsolation: false, webviewTag: true, devTools: true, webSecurity: false
+      nodeIntegration: true, 
+      contextIsolation: false, 
+      webviewTag: true, 
+      devTools: true, // Giữ true để debug nếu lỗi
+      webSecurity: false
     },
   });
   mainWindow.removeMenu();
+
+  // [FIX 3] Chỉ hiện cửa sổ khi nội dung đã sẵn sàng
+  mainWindow.once('ready-to-show', () => {
+    mainWindow.show();
+  });
 
   mainWindow.webContents.on('before-input-event', (event, input) => {
     if ((input.control || input.meta) && input.key.toLowerCase() === 'r') event.preventDefault();
@@ -211,10 +222,13 @@ function createWindow() {
   if (isDev) {
       mainWindow.loadURL('http://localhost:5173');
   } else {
+      // [QUAN TRỌNG] Load file từ dist
       mainWindow.loadFile(path.join(__dirname, '../dist/index.html'));
+      
+      // [DEBUG] Nếu bị trắng màn hình ở bản build, bỏ comment dòng dưới để xem lỗi gì
+      // mainWindow.webContents.openDevTools(); 
   }
 }
-
 app.whenReady().then(() => {
   // [FIX] Xử lý đường dẫn ảnh: Cắt bỏ tham số ?t=... để Windows tìm đúng file
 protocol.registerFileProtocol('local-resource', (request, callback) => {
