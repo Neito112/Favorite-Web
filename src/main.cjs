@@ -34,66 +34,59 @@ const SETTINGS_FILE = path.join(USER_DATA_DIR, 'settings.json');
 const BG_FILE = path.join(USER_DATA_DIR, 'background.png');
 const APP_ICON_PATH = path.join(__dirname, '../icon.ico');
 
-// --- HÀM KHÔI PHỤC DỮ LIỆU CŨ ---
+// --- [SAFE MODE] HÀM KHỞI TẠO DỮ LIỆU AN TOÀN ---
 function initializeUserData() {
+    // 1. Tạo các thư mục lưu trữ nếu chưa có
     try {
-        if (!fs.existsSync(USER_DATA_DIR)) fs.mkdirSync(USER_DATA_DIR, { recursive: true });
-        if (!fs.existsSync(BOOKMARKS_DIR)) fs.mkdirSync(BOOKMARKS_DIR, { recursive: true });
-        if (!fs.existsSync(ICONS_DIR)) fs.mkdirSync(ICONS_DIR, { recursive: true });
-        if (!fs.existsSync(FONTS_DIR)) fs.mkdirSync(FONTS_DIR, { recursive: true });
+        [USER_DATA_DIR, BOOKMARKS_DIR, ICONS_DIR, FONTS_DIR].forEach(dir => {
+            if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+        });
+    } catch (e) { console.error('[INIT] Lỗi tạo thư mục:', e); }
 
-        console.log('[MIGRATION] Dang dong bo Bookmarks...');
-        copyFolderRecursiveSync(path.join(APP_INSTALL_DIR, 'bookmarks'), BOOKMARKS_DIR);
+    // 2. Bắt đầu đồng bộ dữ liệu từ bản cài đặt (nếu có)
+    if (fs.existsSync(APP_INSTALL_DIR)) {
+        console.log('[MIGRATION] Kiem tra du lieu mac dinh...');
 
-        console.log('[MIGRATION] Dang dong bo Icons...');
-        copyFolderRecursiveSync(path.join(APP_INSTALL_DIR, 'icons'), ICONS_DIR);
-
-        copyFolderRecursiveSync(path.join(APP_INSTALL_DIR, 'fonts'), FONTS_DIR);
-        
-        const defaultBg = path.join(APP_INSTALL_DIR, 'background.png');
-        if (fs.existsSync(defaultBg) && !fs.existsSync(BG_FILE)) {
-            fs.copyFileSync(defaultBg, BG_FILE);
+        // --- A. ĐỒNG BỘ BOOKMARKS ---
+        const sourceBookmarks = path.join(APP_INSTALL_DIR, 'bookmarks');
+        if (fs.existsSync(sourceBookmarks)) {
+            try {
+                const files = fs.readdirSync(sourceBookmarks);
+                files.forEach(file => {
+                    const src = path.join(sourceBookmarks, file);
+                    const dest = path.join(BOOKMARKS_DIR, file);
+                    // Chỉ copy nếu user chưa có file này (tránh ghi đè dữ liệu cũ của họ)
+                    if (!fs.existsSync(dest)) {
+                        try { fs.copyFileSync(src, dest); } catch (err) {} 
+                    }
+                });
+            } catch (e) { console.error('[MIGRATION] Loi doc bookmarks:', e); }
         }
-        const defaultSettings = path.join(APP_INSTALL_DIR, 'settings.json');
-        if (fs.existsSync(defaultSettings) && !fs.existsSync(SETTINGS_FILE)) {
-            fs.copyFileSync(defaultSettings, SETTINGS_FILE);
+
+        // --- B. ĐỒNG BỘ ICONS (PHẦN QUAN TRỌNG NHẤT) ---
+        // Đây là nơi hay gây treo app nhất do file ảnh dễ bị lỗi hoặc bị khóa
+        const sourceIcons = path.join(APP_INSTALL_DIR, 'icons');
+        if (fs.existsSync(sourceIcons)) {
+            try {
+                const files = fs.readdirSync(sourceIcons);
+                files.forEach(file => {
+                    const src = path.join(sourceIcons, file);
+                    const dest = path.join(ICONS_DIR, file);
+                    
+                    // Nếu icon chưa có bên AppData thì mới copy
+                    if (!fs.existsSync(dest)) {
+                        // [FIX AN TOÀN] Dùng try-catch riêng cho từng file
+                        // Nếu 1 file lỗi -> Bỏ qua ngay -> Chạy tiếp file sau -> KHÔNG TREO APP
+                        try { 
+                            fs.copyFileSync(src, dest); 
+                        } catch (err) { 
+                            console.error(`[SKIP] Bỏ qua icon lỗi: ${file}`); 
+                        }
+                    }
+                });
+            } catch (e) { console.error('[MIGRATION] Loi doc icons:', e); }
         }
-
-    } catch (err) { console.error('[ERROR] Loi khoi tao data:', err); }
-}
-
-function copyFolderRecursiveSync(source, target) {
-    if (!fs.existsSync(source)) return;
-    if (!fs.existsSync(target)) fs.mkdirSync(target, { recursive: true });
-    const files = fs.readdirSync(source);
-    files.forEach((file) => {
-        const curSource = path.join(source, file);
-        const curTarget = path.join(target, file);
-        if (fs.lstatSync(curSource).isDirectory()) {
-            copyFolderRecursiveSync(curSource, curTarget);
-        } else {
-            if (!fs.existsSync(curTarget)) {
-                fs.copyFileSync(curSource, curTarget);
-            }
-        }
-    });
-}
-
-function downloadImage(url, filepath) {
-  return new Promise((resolve, reject) => {
-    const options = { headers: { 'User-Agent': 'Mozilla/5.0' } };
-    const request = https.get(url, options, (response) => {
-      if (response.statusCode === 301 || response.statusCode === 302) {
-        if (response.headers.location) return downloadImage(response.headers.location, filepath).then(resolve).catch(reject);
-      }
-      if (response.statusCode !== 200) return reject(new Error(`Status: ${response.statusCode}`));
-      const file = fs.createWriteStream(filepath);
-      response.pipe(file);
-      file.on('finish', () => file.close(() => resolve(filepath)));
-      file.on('error', (err) => { fs.unlink(filepath, () => {}); reject(err); });
-    });
-    request.on('error', (err) => { fs.unlink(filepath, () => {}); reject(err); });
-  });
+    }
 }
 
 // --- [BỔ SUNG QUAN TRỌNG] QUẢN LÝ CỬA SỔ MAGIC TOOL ---
@@ -174,10 +167,7 @@ app.disableHardwareAcceleration();
 try {
     const userDataPath = app.getPath('userData');
     const gpuCachePath = path.join(userDataPath, 'GPUCache');
-    if (fs.existsSync(gpuCachePath)) {
-        // Chỉ thử xóa, nếu lỗi thì bỏ qua để không làm rác log
-        try { fs.rmSync(gpuCachePath, { recursive: true, force: true }); } catch (err) {}
-    }
+
 } catch (e) {}
 // Các cấu hình cũ giữ nguyên
 app.commandLine.appendSwitch('ignore-certificate-errors');
