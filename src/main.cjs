@@ -34,174 +34,161 @@ const SETTINGS_FILE = path.join(USER_DATA_DIR, 'settings.json');
 const BG_FILE = path.join(USER_DATA_DIR, 'background.png');
 const APP_ICON_PATH = path.join(__dirname, '../icon.ico');
 
-// --- [SAFE MODE] HÀM KHỞI TẠO DỮ LIỆU AN TOÀN ---
+// --- HÀM KHÔI PHỤC DỮ LIỆU CŨ ---
 function initializeUserData() {
-    // 1. Tạo các thư mục lưu trữ nếu chưa có
     try {
-        [USER_DATA_DIR, BOOKMARKS_DIR, ICONS_DIR, FONTS_DIR].forEach(dir => {
-            if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
-        });
-    } catch (e) { console.error('[INIT] Lỗi tạo thư mục:', e); }
+        if (!fs.existsSync(USER_DATA_DIR)) fs.mkdirSync(USER_DATA_DIR, { recursive: true });
+        if (!fs.existsSync(BOOKMARKS_DIR)) fs.mkdirSync(BOOKMARKS_DIR, { recursive: true });
+        if (!fs.existsSync(ICONS_DIR)) fs.mkdirSync(ICONS_DIR, { recursive: true });
+        if (!fs.existsSync(FONTS_DIR)) fs.mkdirSync(FONTS_DIR, { recursive: true });
 
-    // 2. Bắt đầu đồng bộ dữ liệu từ bản cài đặt (nếu có)
-    if (fs.existsSync(APP_INSTALL_DIR)) {
-        console.log('[MIGRATION] Kiem tra du lieu mac dinh...');
+        console.log('[MIGRATION] Dang dong bo Bookmarks...');
+        copyFolderRecursiveSync(path.join(APP_INSTALL_DIR, 'bookmarks'), BOOKMARKS_DIR);
 
-        // --- A. ĐỒNG BỘ BOOKMARKS ---
-        const sourceBookmarks = path.join(APP_INSTALL_DIR, 'bookmarks');
-        if (fs.existsSync(sourceBookmarks)) {
-            try {
-                const files = fs.readdirSync(sourceBookmarks);
-                files.forEach(file => {
-                    const src = path.join(sourceBookmarks, file);
-                    const dest = path.join(BOOKMARKS_DIR, file);
-                    // Chỉ copy nếu user chưa có file này (tránh ghi đè dữ liệu cũ của họ)
-                    if (!fs.existsSync(dest)) {
-                        try { fs.copyFileSync(src, dest); } catch (err) {} 
-                    }
-                });
-            } catch (e) { console.error('[MIGRATION] Loi doc bookmarks:', e); }
+        console.log('[MIGRATION] Dang dong bo Icons...');
+        copyFolderRecursiveSync(path.join(APP_INSTALL_DIR, 'icons'), ICONS_DIR);
+
+        copyFolderRecursiveSync(path.join(APP_INSTALL_DIR, 'fonts'), FONTS_DIR);
+        
+        const defaultBg = path.join(APP_INSTALL_DIR, 'background.png');
+        if (fs.existsSync(defaultBg) && !fs.existsSync(BG_FILE)) {
+            fs.copyFileSync(defaultBg, BG_FILE);
+        }
+        const defaultSettings = path.join(APP_INSTALL_DIR, 'settings.json');
+        if (fs.existsSync(defaultSettings) && !fs.existsSync(SETTINGS_FILE)) {
+            fs.copyFileSync(defaultSettings, SETTINGS_FILE);
         }
 
-        // --- B. ĐỒNG BỘ ICONS (PHẦN QUAN TRỌNG NHẤT) ---
-        // Đây là nơi hay gây treo app nhất do file ảnh dễ bị lỗi hoặc bị khóa
-        const sourceIcons = path.join(APP_INSTALL_DIR, 'icons');
-        if (fs.existsSync(sourceIcons)) {
-            try {
-                const files = fs.readdirSync(sourceIcons);
-                files.forEach(file => {
-                    const src = path.join(sourceIcons, file);
-                    const dest = path.join(ICONS_DIR, file);
-                    
-                    // Nếu icon chưa có bên AppData thì mới copy
-                    if (!fs.existsSync(dest)) {
-                        // [FIX AN TOÀN] Dùng try-catch riêng cho từng file
-                        // Nếu 1 file lỗi -> Bỏ qua ngay -> Chạy tiếp file sau -> KHÔNG TREO APP
-                        try { 
-                            fs.copyFileSync(src, dest); 
-                        } catch (err) { 
-                            console.error(`[SKIP] Bỏ qua icon lỗi: ${file}`); 
-                        }
-                    }
-                });
-            } catch (e) { console.error('[MIGRATION] Loi doc icons:', e); }
+    } catch (err) { console.error('[ERROR] Loi khoi tao data:', err); }
+}
+
+function copyFolderRecursiveSync(source, target) {
+    if (!fs.existsSync(source)) return;
+    if (!fs.existsSync(target)) fs.mkdirSync(target, { recursive: true });
+    const files = fs.readdirSync(source);
+    files.forEach((file) => {
+        const curSource = path.join(source, file);
+        const curTarget = path.join(target, file);
+        if (fs.lstatSync(curSource).isDirectory()) {
+            copyFolderRecursiveSync(curSource, curTarget);
+        } else {
+            if (!fs.existsSync(curTarget)) {
+                fs.copyFileSync(curSource, curTarget);
+            }
         }
-    }
+    });
+}
+
+function downloadImage(url, filepath) {
+  return new Promise((resolve, reject) => {
+    const options = { headers: { 'User-Agent': 'Mozilla/5.0' } };
+    const request = https.get(url, options, (response) => {
+      if (response.statusCode === 301 || response.statusCode === 302) {
+        if (response.headers.location) return downloadImage(response.headers.location, filepath).then(resolve).catch(reject);
+      }
+      if (response.statusCode !== 200) return reject(new Error(`Status: ${response.statusCode}`));
+      const file = fs.createWriteStream(filepath);
+      response.pipe(file);
+      file.on('finish', () => file.close(() => resolve(filepath)));
+      file.on('error', (err) => { fs.unlink(filepath, () => {}); reject(err); });
+    });
+    request.on('error', (err) => { fs.unlink(filepath, () => {}); reject(err); });
+  });
 }
 
 // --- [BỔ SUNG QUAN TRỌNG] QUẢN LÝ CỬA SỔ MAGIC TOOL ---
 
-// 1. Mở cửa sổ Magic Tool (Hỗ trợ Animation theo tọa độ)
-ipcMain.on('open-magic-tool', (event, payload) => {
-    // Chuẩn hóa dữ liệu đầu vào
-    let items = null;
-    let animCoords = null;
-
-    if (Array.isArray(payload)) {
-        items = payload; // Trường hợp kéo thả file (payload là mảng)
-    } else if (payload && payload.type === 'toggle') {
-        animCoords = { x: payload.x, y: payload.y }; // Trường hợp click nút
-    }
-
+// 1. Mở cửa sổ Magic Tool (Đã sửa lỗi Toggle)
+ipcMain.on('open-magic-tool', (event, initialData) => {
     // Nếu cửa sổ đang tồn tại
     if (magicWindow && !magicWindow.isDestroyed()) {
         
-        // CASE A: Có items mới (Kéo thả) -> Mở và update
-        if (items) {
+        // TRƯỜNG HỢP A: Có dữ liệu mới (do Kéo thả Link) -> Luôn hiện và cập nhật
+        if (initialData) {
             if (magicWindow.isMinimized()) magicWindow.restore();
-            magicWindow.show();
+            magicWindow.show(); // Đảm bảo cửa sổ hiện lên
             magicWindow.focus();
-            magicWindow.webContents.send('magic-data-update', items);
+            magicWindow.webContents.send('magic-data-update', initialData);
             return;
         }
 
-        // CASE B: Toggle (Click nút)
+        // TRƯỜNG HỢP B: Bấm nút (initialData là null) -> Xử lý Bật/Tắt
+        // [FIX] Dùng isVisible() thay vì isFocused() để tránh lỗi mất focus khi click vào Main Window
         if (magicWindow.isVisible()) {
-            magicWindow.close(); // Đang hiện -> Đóng
+            magicWindow.close(); // Nếu đang hiện -> Đóng
         } else {
             if (magicWindow.isMinimized()) magicWindow.restore();
-            
-            // [QUAN TRỌNG] Gửi tọa độ animation trước khi hiện cửa sổ
-            if (animCoords) magicWindow.webContents.send('set-anim-origin', animCoords);
-            
-            magicWindow.show();
+            magicWindow.show();  // Nếu đang ẩn -> Hiện
             magicWindow.focus();
         }
         return;
     }
 
-    // Nếu chưa có cửa sổ -> Tạo mới
+    // Nếu chưa có cửa sổ -> Tạo mới như bình thường
     magicWindow = new BrowserWindow({
         width: 800, height: 600,
         minWidth: 600, minHeight: 400,
         title: 'Magic Downloader',
         icon: fs.existsSync(APP_ICON_PATH) ? APP_ICON_PATH : null,
         frame: false, 
-        transparent: true,            
-        backgroundColor: '#00000000', 
-        hasShadow: true,              
+        
+        // [THÊM 2 DÒNG NÀY ĐỂ HỖ TRỢ ANIMATION]
+        transparent: true,            // Cho phép nền trong suốt
+        backgroundColor: '#00000000', // Mã màu trong suốt hoàn toàn
+        hasShadow: true,              // Đổ bóng cửa sổ (trên macOS/Windows)
+
         webPreferences: {
-            nodeIntegration: true, contextIsolation: false, webviewTag: true, webSecurity: false
+            nodeIntegration: true, 
+            contextIsolation: false, 
+            webviewTag: true, 
+            webSecurity: false
         }
     });
 
     const isDev = !app.isPackaged;
-    const url = isDev ? 'http://localhost:5173/#magic-tool' : `file://${path.join(__dirname, '../dist/index.html')}#magic-tool`;
+    const url = isDev 
+        ? 'http://localhost:5173/#magic-tool' 
+        : `file://${path.join(__dirname, '../dist/index.html')}#magic-tool`;
     
     magicWindow.loadURL(url);
 
-    // Khi load xong
     magicWindow.webContents.on('did-finish-load', () => {
-        // Gửi dữ liệu nếu có
-        if (items) magicWindow.webContents.send('magic-data-update', items);
-        // Gửi tọa độ để tính toán animation ngay lần mở đầu tiên
-        if (animCoords) magicWindow.webContents.send('set-anim-origin', animCoords);
+        if (initialData) magicWindow.webContents.send('magic-data-update', initialData);
     });
 
     magicWindow.on('closed', () => { magicWindow = null; });
 });
 
-// --- [FIX LAG] Tắt Hardware Acceleration để tránh lỗi GPU Cache trên Windows ---
-app.disableHardwareAcceleration(); 
-// [FIX] Dọn dẹp Cache nhẹ nhàng (Bỏ qua nếu đang bị khóa)
-try {
-    const userDataPath = app.getPath('userData');
-    const gpuCachePath = path.join(userDataPath, 'GPUCache');
+// 2. Điều khiển cửa sổ (Thu nhỏ, Phóng to, Đóng)
+ipcMain.on('magic-window-control', (event, action) => {
+    const win = BrowserWindow.fromWebContents(event.sender);
+    if (!win) return;
+    switch (action) {
+        case 'minimize': win.minimize(); break;
+        case 'maximize': win.isMaximized() ? win.unmaximize() : win.maximize(); break;
+        case 'close': win.close(); break;
+    }
+});
 
-} catch (e) {}
-// Các cấu hình cũ giữ nguyên
 app.commandLine.appendSwitch('ignore-certificate-errors');
 app.commandLine.appendSwitch('lang', 'vi');
 
-// Thêm cấu hình tối ưu bộ nhớ GPU (phòng hờ)
-app.commandLine.appendSwitch('force-gpu-mem-available-mb', '1024'); 
-app.commandLine.appendSwitch('disable-gpu-compositing');
+
 
 function createWindow() {
   initializeUserData();
   mainWindow = new BrowserWindow({
     width: 1280, height: 800,
-    minWidth: 435, 
-    minHeight: 295,
+    minWidth: 435,  // [UPDATE] Giới hạn chiều rộng tối thiểu (cỡ điện thoại)
+    minHeight: 295, // [UPDATE] Giới hạn chiều cao tối thiểu
     frame: false,
     autoHideMenuBar: true,
-    show: false, // [FIX 1] Ẩn cửa sổ lúc mới tạo để tránh "Flash trắng"
-    backgroundColor: '#1e1e1e', // [FIX 2] Đặt màu nền khớp với App để mượt hơn
     icon: fs.existsSync(APP_ICON_PATH) ? APP_ICON_PATH : null, 
     webPreferences: {
-      nodeIntegration: true, 
-      contextIsolation: false, 
-      webviewTag: true, 
-      devTools: true, // Giữ true để debug nếu lỗi
-      webSecurity: false
+      nodeIntegration: true, contextIsolation: false, webviewTag: true, devTools: true, webSecurity: false
     },
   });
   mainWindow.removeMenu();
-
-  // [FIX 3] Chỉ hiện cửa sổ khi nội dung đã sẵn sàng
-  mainWindow.once('ready-to-show', () => {
-    mainWindow.show();
-  });
 
   mainWindow.webContents.on('before-input-event', (event, input) => {
     if ((input.control || input.meta) && input.key.toLowerCase() === 'r') event.preventDefault();
@@ -212,21 +199,15 @@ function createWindow() {
   if (isDev) {
       mainWindow.loadURL('http://localhost:5173');
   } else {
-      // [QUAN TRỌNG] Load file từ dist
-      mainWindow.loadFile(path.join(__dirname, 'dist/index.html'));
-      
-// [QUAN TRỌNG] Bật dòng này lên để debug lỗi trắng màn hình
-      mainWindow.webContents.openDevTools();
+      mainWindow.loadFile(path.join(__dirname, '../dist/index.html'));
   }
 }
+
 app.whenReady().then(() => {
-  // [FIX] Xử lý đường dẫn ảnh: Cắt bỏ tham số ?t=... để Windows tìm đúng file
-protocol.registerFileProtocol('local-resource', (request, callback) => {
-    let url = request.url.replace('local-resource://', '');
-    // Quan trọng: Loại bỏ query string (ví dụ ?t=12345) trước khi đọc file
-    url = url.split('?')[0]; 
+  protocol.registerFileProtocol('local-resource', (request, callback) => {
+    const url = request.url.replace('local-resource://', '');
     try { return callback(decodeURI(url)); } catch (error) { console.error(error); }
-});
+  });
 
   createWindow();
 
@@ -253,62 +234,30 @@ if (autoUpdater) {
     });
 }
 
-// --- [SAFE LOAD] HÀM ĐỌC BOOKMARK THÔNG MINH (CHỐNG LỖI FILE LẠ) ---
+// --- IPC HANDLERS ---
 ipcMain.handle('load-bookmarks', async () => {
-    try {
-        // 1. Đảm bảo thư mục tồn tại
-        if (!fs.existsSync(BOOKMARKS_DIR)) {
-            fs.mkdirSync(BOOKMARKS_DIR, { recursive: true });
-            return [];
-        }
-
-        const files = fs.readdirSync(BOOKMARKS_DIR);
-        
-        // 2. Dùng map để xử lý từng file an toàn
-        const bookmarks = files.map(file => {
-            const filePath = path.join(BOOKMARKS_DIR, file);
-
-            // A. LỌC ĐUÔI FILE: Chỉ chấp nhận .json, bỏ qua tất cả file rác (.txt, .png, .tmp...)
-            if (!file.toLowerCase().endsWith('.json')) return null;
-
-            try {
-                // B. ĐỌC VÀ PARSE FILE
-                const fileContent = fs.readFileSync(filePath, 'utf-8');
-                // Nếu file rỗng -> Bỏ qua
-                if (!fileContent.trim()) return null;
-
-                const data = JSON.parse(fileContent);
-
-                // C. KIỂM TRA DỮ LIỆU BẮT BUỘC
-                // Nếu thiếu ID hoặc URL -> Coi như file hỏng -> Bỏ qua
-                if (!data.id || !data.url) {
-                    console.warn(`[SKIP] Bỏ qua bookmark hỏng (thiếu ID/URL): ${file}`);
-                    return null;
-                }
-
-                // D. XỬ LÝ ĐƯỜNG DẪN ICON (Quan trọng khi copy từ máy khác)
-                if (data.localIconPath) {
-                    // Chuẩn hóa dấu gạch chéo để tránh lỗi Windows/Linux
-                    data.localIconPath = path.join(ICONS_DIR, path.basename(data.localIconPath)).replace(/\\/g, '/');
-                }
-
-                return data;
-            } catch (err) {
-                // E. NẾU GẶP BẤT KỲ LỖI GÌ (Sai cú pháp, file lỗi...) -> BỎ QUA LUÔN
-                console.error(`[ERROR] File lỗi, tự động bỏ qua: ${file}`);
-                return null;
-            }
-        })
-        .filter(item => item !== null) // Loại bỏ sạch sẽ các file lỗi (null)
-        .sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0)); // Sắp xếp cái mới lên đầu
-
-        console.log(`[LOAD] Đã load thành công ${bookmarks.length} bookmarks hợp lệ.`);
-        return bookmarks;
-
-    } catch (error) {
-        console.error("Lỗi nghiêm trọng khi đọc thư mục bookmarks:", error);
-        return []; // Trả về rỗng để App vẫn mở lên được (không trắng màn hình)
+  try {
+    if (!fs.existsSync(BOOKMARKS_DIR)) return [];
+    
+    const files = fs.readdirSync(BOOKMARKS_DIR);
+    const bookmarks = [];
+    for (const file of files) {
+      if (file.endsWith('.json')) {
+        try {
+          const content = fs.readFileSync(path.join(BOOKMARKS_DIR, file), 'utf-8');
+          const data = JSON.parse(content);
+          if (data && typeof data === 'object') {
+              if (data.localIconPath) {
+                 const fileName = path.basename(data.localIconPath);
+                 data.localIconPath = path.join(ICONS_DIR, fileName).replace(/\\/g, '/');
+              }
+              bookmarks.push(data);
+          }
+        } catch (e) {}
+      }
     }
+    return bookmarks.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+  } catch (error) { return []; }
 });
 
 ipcMain.handle('add-bookmark', async (event, bookmarkData) => {
@@ -352,82 +301,20 @@ ipcMain.handle('delete-bookmark', async (event, id) => {
   } catch (error) { return { success: false, error: error.message }; }
 });
 
-// [FIX FINAL] Hàm Update Bookmark: Xử lý thông minh việc giữ ảnh cũ hoặc lưu ảnh mới
 ipcMain.handle('update-bookmark', async (event, bookmarkData) => {
     try {
-        const id = bookmarkData.id;
-        const jsonPath = path.join(BOOKMARKS_DIR, `${id}.json`);
-        
+        const jsonPath = path.join(BOOKMARKS_DIR, `${bookmarkData.id}.json`);
         if (fs.existsSync(jsonPath)) {
-            // 1. Đọc dữ liệu CŨ từ file
             const oldData = JSON.parse(fs.readFileSync(jsonPath, 'utf-8'));
-            
-            // Mặc định giữ nguyên tên file ảnh cũ
-            let savedIconFilename = oldData.localIconPath ? path.basename(oldData.localIconPath) : null;
-            
-            // 2. Kiểm tra xem người dùng có gửi ảnh MỚI không?
-            // Nếu iconUrl khác với localIconPath cũ -> Có nghĩa là người dùng đã chọn ảnh mới
-            if (bookmarkData.iconUrl && !bookmarkData.iconUrl.startsWith('local-resource://') && !bookmarkData.iconUrl.includes(savedIconFilename)) {
-                
-                const iconFilename = `${id}_${Date.now()}.png`; // Thêm timestamp để tránh cache
-                const iconSavePath = path.join(ICONS_DIR, iconFilename);
-                
-                try {
-                    if (bookmarkData.iconUrl.startsWith('data:image')) {
-                        // Lưu ảnh từ Base64 (Upload từ máy)
-                        const base64Data = bookmarkData.iconUrl.replace(/^data:image\/\w+;base64,/, "");
-                        fs.writeFileSync(iconSavePath, base64Data, 'base64');
-                        // Xóa ảnh cũ nếu có để tiết kiệm dung lượng
-                        if (savedIconFilename) {
-                            try { fs.unlinkSync(path.join(ICONS_DIR, savedIconFilename)); } catch(e){}
-                        }
-                        savedIconFilename = iconFilename;
-                    } 
-                    else if (bookmarkData.iconUrl.startsWith('http')) {
-                        // Lưu ảnh từ Link Online
-                        await downloadImage(bookmarkData.iconUrl, iconSavePath);
-                        if (fs.existsSync(iconSavePath)) {
-                            // Xóa ảnh cũ
-                            if (savedIconFilename) {
-                                try { fs.unlinkSync(path.join(ICONS_DIR, savedIconFilename)); } catch(e){}
-                            }
-                            savedIconFilename = iconFilename;
-                        }
-                    }
-                } catch (e) {
-                    console.error("Lỗi lưu icon mới:", e);
-                }
-            }
-
-            // 3. Tạo data mới (Ghi đè thông tin mới vào cũ)
-            const newData = { 
-                ...oldData, 
-                title: bookmarkData.title || oldData.title, // Nếu title rỗng thì giữ cũ
-                url: bookmarkData.url || oldData.url,       // Nếu url rỗng thì giữ cũ
-                localIconPath: savedIconFilename 
-            };
-
-            // 4. Ghi đè file JSON (Quan trọng: Dùng try-catch riêng cho việc ghi file)
-            try {
-                fs.writeFileSync(jsonPath, JSON.stringify(newData, null, 2));
-            } catch (writeErr) {
-                console.error("Lỗi ghi file JSON (Access Denied?):", writeErr);
-                return { success: false, error: "Không thể ghi file (Lỗi quyền truy cập)" };
-            }
-            
-            // 5. Chuẩn bị dữ liệu trả về cho giao diện
-            const returnData = { ...newData };
-            if (returnData.localIconPath) {
-                 returnData.localIconPath = path.join(ICONS_DIR, returnData.localIconPath).replace(/\\/g, '/');
-            }
-            
-            return { success: true, data: returnData };
+            let pathForSave = bookmarkData.localIconPath ? path.basename(bookmarkData.localIconPath) : null;
+            const newData = { ...oldData, ...bookmarkData, localIconPath: pathForSave };
+            fs.writeFileSync(jsonPath, JSON.stringify(newData, null, 2));
+            return { success: true };
         }
-        return { success: false, error: "Không tìm thấy Bookmark gốc" };
-    } catch (error) { 
-        return { success: false, error: error.message }; 
-    }
+        return { success: false };
+    } catch (error) { return { success: false, error: error.message }; }
 });
+
 ipcMain.handle('save-settings', async (event, settings) => {
   try {
     if (settings.bgImage && settings.bgImage.startsWith('data:image')) {

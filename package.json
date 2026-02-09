@@ -1,9 +1,8 @@
 {
   "name": "favo-app",
-  "version": "0.9.35",
+  "version": "0.9.23",
   "description": "Bookmark Manager Favo",
   "main": "src/main.cjs",
-  "homepage": "./",
   "author": "Neito",
   "repository": {
     "type": "git",
@@ -16,7 +15,7 @@
     "preview": "vite preview",
     "electron": "wait-on tcp:5173 && electron .",
     "start:desktop": "concurrently -k \"npm run dev\" \"npm run electron\"",
-    "build": "vite build && electron-builder"
+    "build": "vite build"
   },
   "build": {
     "appId": "com.favo.manager",
