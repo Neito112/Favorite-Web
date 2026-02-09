@@ -223,7 +223,7 @@ function createWindow() {
       mainWindow.loadURL('http://localhost:5173');
   } else {
       // [QUAN TRỌNG] Load file từ dist
-      mainWindow.loadFile(path.join(__dirname, '../dist/index.html'));
+      mainWindow.loadFile(path.join(__dirname, 'dist/index.html'));
       
       // [DEBUG] Nếu bị trắng màn hình ở bản build, bỏ comment dòng dưới để xem lỗi gì
       // mainWindow.webContents.openDevTools(); 
