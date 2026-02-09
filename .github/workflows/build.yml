@@ -24,9 +24,11 @@ jobs:
       - name: Install Dependencies
         run: npm install
 
-      # Bước 1: Build mã nguồn React (Vite) ra thư mục dist
+      # [SỬA LỖI TẠI ĐÂY] 
+      # Thay vì chạy 'npm run build' (vốn chứa cả lệnh electron-builder gây lỗi),
+      # chúng ta gọi thẳng 'vite build' để chỉ đóng gói giao diện web.
       - name: Build React
-        run: npm run build
+        run: npx vite build
 
       # Bước 2: Đóng gói thành file .exe và đẩy lên GitHub Releases
       - name: Build & Release Electron
