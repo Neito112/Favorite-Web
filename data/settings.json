@@ -1,9 +1,0 @@
-{
-  "theme": "dark",
-  "lang": "vi",
-  "font": "Inter",
-  "bgImage": "local-resource://C:/Users/HOMIE/AppData/Roaming/favo-app/UserData/background.png",
-  "bgOpacity": 85,
-  "accentColor": "#22d3ee",
-  "gridCols": 18
-}

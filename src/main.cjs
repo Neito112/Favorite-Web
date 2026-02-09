@@ -253,30 +253,62 @@ if (autoUpdater) {
     });
 }
 
-// --- IPC HANDLERS ---
+// --- [SAFE LOAD] HÀM ĐỌC BOOKMARK THÔNG MINH (CHỐNG LỖI FILE LẠ) ---
 ipcMain.handle('load-bookmarks', async () => {
-  try {
-    if (!fs.existsSync(BOOKMARKS_DIR)) return [];
-    
-    const files = fs.readdirSync(BOOKMARKS_DIR);
-    const bookmarks = [];
-    for (const file of files) {
-      if (file.endsWith('.json')) {
-        try {
-          const content = fs.readFileSync(path.join(BOOKMARKS_DIR, file), 'utf-8');
-          const data = JSON.parse(content);
-          if (data && typeof data === 'object') {
-              if (data.localIconPath) {
-                 const fileName = path.basename(data.localIconPath);
-                 data.localIconPath = path.join(ICONS_DIR, fileName).replace(/\\/g, '/');
-              }
-              bookmarks.push(data);
-          }
-        } catch (e) {}
-      }
+    try {
+        // 1. Đảm bảo thư mục tồn tại
+        if (!fs.existsSync(BOOKMARKS_DIR)) {
+            fs.mkdirSync(BOOKMARKS_DIR, { recursive: true });
+            return [];
+        }
+
+        const files = fs.readdirSync(BOOKMARKS_DIR);
+        
+        // 2. Dùng map để xử lý từng file an toàn
+        const bookmarks = files.map(file => {
+            const filePath = path.join(BOOKMARKS_DIR, file);
+
+            // A. LỌC ĐUÔI FILE: Chỉ chấp nhận .json, bỏ qua tất cả file rác (.txt, .png, .tmp...)
+            if (!file.toLowerCase().endsWith('.json')) return null;
+
+            try {
+                // B. ĐỌC VÀ PARSE FILE
+                const fileContent = fs.readFileSync(filePath, 'utf-8');
+                // Nếu file rỗng -> Bỏ qua
+                if (!fileContent.trim()) return null;
+
+                const data = JSON.parse(fileContent);
+
+                // C. KIỂM TRA DỮ LIỆU BẮT BUỘC
+                // Nếu thiếu ID hoặc URL -> Coi như file hỏng -> Bỏ qua
+                if (!data.id || !data.url) {
+                    console.warn(`[SKIP] Bỏ qua bookmark hỏng (thiếu ID/URL): ${file}`);
+                    return null;
+                }
+
+                // D. XỬ LÝ ĐƯỜNG DẪN ICON (Quan trọng khi copy từ máy khác)
+                if (data.localIconPath) {
+                    // Chuẩn hóa dấu gạch chéo để tránh lỗi Windows/Linux
+                    data.localIconPath = path.join(ICONS_DIR, path.basename(data.localIconPath)).replace(/\\/g, '/');
+                }
+
+                return data;
+            } catch (err) {
+                // E. NẾU GẶP BẤT KỲ LỖI GÌ (Sai cú pháp, file lỗi...) -> BỎ QUA LUÔN
+                console.error(`[ERROR] File lỗi, tự động bỏ qua: ${file}`);
+                return null;
+            }
+        })
+        .filter(item => item !== null) // Loại bỏ sạch sẽ các file lỗi (null)
+        .sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0)); // Sắp xếp cái mới lên đầu
+
+        console.log(`[LOAD] Đã load thành công ${bookmarks.length} bookmarks hợp lệ.`);
+        return bookmarks;
+
+    } catch (error) {
+        console.error("Lỗi nghiêm trọng khi đọc thư mục bookmarks:", error);
+        return []; // Trả về rỗng để App vẫn mở lên được (không trắng màn hình)
     }
-    return bookmarks.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-  } catch (error) { return []; }
 });
 
 ipcMain.handle('add-bookmark', async (event, bookmarkData) => {
